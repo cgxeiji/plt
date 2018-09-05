@@ -18,6 +18,49 @@ var (
 	test int
 )
 
+func absMax(a, b int) int {
+	if a < 0 {
+		a = -a
+	}
+	if b < 0 {
+		b = -b
+	}
+
+	if a < b {
+		return b
+	}
+	return a
+}
+
+func line(dst draw.Image, sp image.Point, ep image.Point, w int, c color.Color) {
+	slope := ep.Sub(sp)
+
+	d := absMax(slope.X, slope.Y)
+	slopeX := float64(slope.X) / float64(d)
+	slopeY := float64(slope.Y) / float64(d)
+
+	steps := 0
+
+	if d == slope.X {
+		steps = ep.X - sp.X
+	} else {
+		steps = ep.Y - sp.Y
+	}
+	if steps < 0 {
+		steps = -steps
+	}
+
+	for j := 0; j < w; j++ {
+		for i := 0; i < steps; i++ {
+			dst.Set(
+				sp.X+int(slopeX*float64(i))+j,
+				sp.Y+int(slopeY*float64(i))+j,
+				c)
+		}
+	}
+
+}
+
 func border(dst draw.Image, r image.Rectangle, w int, src image.Image,
 	sp image.Point, op draw.Op) {
 	// inside r
