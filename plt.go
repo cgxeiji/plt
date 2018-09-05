@@ -2,8 +2,8 @@ package main
 
 import (
 	"flag"
+	"fmt"
 	"github.com/cgxeiji/plt/canvas"
-	"golang.org/x/image/colornames"
 	"image"
 	"image/color"
 	"image/draw"
@@ -58,6 +58,39 @@ func Border(dst draw.Image, r image.Rectangle, w int, src image.Image,
 		src, sp.Add(image.Pt(-w, 0)), op)
 }
 
+func plot(X, Y []float64) (draw.Image, error) {
+	var w, h int = 640, 480
+
+	figure, err := canvas.NewFigure(float64(w), float64(h))
+	if err != nil {
+		return nil, err
+	}
+
+	bg := image.NewRGBA(image.Rect(0, 0, w, h))
+	draw.Draw(bg, bg.Bounds(), &image.Uniform{blue}, image.ZP, draw.Src)
+
+	show(bg, figure)
+
+	if len(X) != len(Y) {
+		return nil, fmt.Errorf("Dimensions mismatch (X[%v] != Y[%v])", len(X), len(Y))
+	}
+
+	ax := figure.NewAxes()
+	show(bg, ax)
+	n := float64(len(Y))
+	var padding float64 = 0.1
+	barW := (2.0 - 4.0*padding) / (3*n - 1)
+	spaceW := barW / 2.0
+
+	for i, _ := range X {
+		bar, _ := canvas.NewBar(ax, padding+barW/2.0+float64(i)*(barW+spaceW), 0, barW, Y[i])
+		bar.XAlign = canvas.CenterAlign
+		show(bg, bar)
+	}
+
+	return bg, nil
+}
+
 func readFlags() {
 	flag.IntVar(&test, "test", 123, "Testing flag")
 }
@@ -67,39 +100,43 @@ func show(dst draw.Image, c canvas.Container) {
 }
 
 func homeH(w http.ResponseWriter, r *http.Request) {
-	figure, err := canvas.NewFigure(400, 300)
-	if err != nil {
-		log.Fatal(err)
-	}
+	// figure, err := canvas.NewFigure(400, 300)
+	// if err != nil {
+	// 	log.Fatal(err)
+	// }
 
-	ax := figure.NewAxes()
+	// ax := figure.NewAxes()
 
-	bar, _ := canvas.NewBar(ax, 0.2, 0, 0.1, 0.5)
-	bar2, _ := canvas.NewBar(ax, 0.3, 0, 0.2, 0.7)
-	bar2.BG = colornames.Black
-	bar.XAlign = canvas.CenterAlign
-	bar2.XAlign = canvas.CenterAlign
+	// bar, _ := canvas.NewBar(ax, 0.2, 0, 0.1, 0.5)
+	// bar2, _ := canvas.NewBar(ax, 0.3, 0, 0.2, 0.7)
+	// bar2.BG = colornames.Black
+	// bar.XAlign = canvas.CenterAlign
+	// bar2.XAlign = canvas.CenterAlign
 
-	bg := image.NewRGBA(image.Rect(0, 0, 640, 480))
+	// bg := image.NewRGBA(image.Rect(0, 0, 640, 480))
 
-	figure.Resize(640, 480)
+	// figure.Resize(640, 480)
 
-	log.Println("[Fig]", figure)
-	log.Println("[Axes]", ax)
-	log.Println("[Bar]", bar)
+	// log.Println("[Fig]", figure)
+	// log.Println("[Axes]", ax)
+	// log.Println("[Bar]", bar)
 
-	draw.Draw(bg, bg.Bounds(), &image.Uniform{blue}, image.ZP, draw.Src)
+	// draw.Draw(bg, bg.Bounds(), &image.Uniform{blue}, image.ZP, draw.Src)
 
-	log.Println("[Fig]", figure.Bounds())
-	show(bg, figure)
-	log.Println("[Axes]", ax.Bounds())
-	show(bg, ax)
-	log.Println("[Bar]", bar.Bounds())
-	show(bg, bar)
-	log.Println(ax.Color())
+	// log.Println("[Fig]", figure.Bounds())
+	// show(bg, figure)
+	// log.Println("[Axes]", ax.Bounds())
+	// show(bg, ax)
+	// log.Println("[Bar]", bar.Bounds())
+	// show(bg, bar)
+	// log.Println(ax.Color())
 
-	rect := bar2.Bounds()
-	Border(bg, rect, 2, &image.Uniform{blue}, rect.Min, draw.Src)
+	// rect := bar2.Bounds()
+	// Border(bg, rect, 2, &image.Uniform{blue}, rect.Min, draw.Src)
+
+	x := []float64{0.1, 0.2, 0.3, 0.4, 0.5}
+	y := []float64{0.1, 0.1, 0.2, 0.4, 0.1}
+	bg, _ := plot(x, y)
 
 	png.Encode(w, bg)
 

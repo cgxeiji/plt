@@ -19,7 +19,7 @@ func (f *Figure) Resize(w, h float64) {
 }
 
 func (f *Figure) NewAxes() *Axes {
-	ax, _ := NewAxes(f, 0.1, 0.1, 0.5, 0.5)
+	ax, _ := NewAxes(f, 0.1, 0.1, 0.8, 0.8)
 	return &ax
 }
 

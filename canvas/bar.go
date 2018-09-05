@@ -19,6 +19,7 @@ func (b *Bar) String() string {
 
 func NewBar(parent *Axes, dims ...float64) (*Bar, error) {
 	var min, max [2]float64
+	fmt.Println("bar,", dims)
 
 	switch l := len(dims); l {
 	case 0:
