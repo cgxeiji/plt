@@ -1,19 +1,13 @@
-package main
+// Package plt provides functions to plot data as draw.Image struct.
+package plt
 
 import (
-	"flag"
 	"fmt"
 	"github.com/cgxeiji/plt/canvas"
 	"image"
 	"image/color"
 	"image/draw"
-	"image/png"
 	"log"
-	"math/rand"
-	"net/http"
-	"os/exec"
-	"runtime"
-	"time"
 )
 
 var (
@@ -24,7 +18,7 @@ var (
 	test int
 )
 
-func Border(dst draw.Image, r image.Rectangle, w int, src image.Image,
+func border(dst draw.Image, r image.Rectangle, w int, src image.Image,
 	sp image.Point, op draw.Op) {
 	// inside r
 	if w > 0 {
@@ -72,10 +66,12 @@ func max(s []float64) float64 {
 	return m
 }
 
-func plot(X, Y []float64) (draw.Image, error) {
+// Bar creates a draw.Image struct given X and Y slices of []float64.
+// X and Y must have the same length.
+func Bar(X, Y []float64) (draw.Image, error) {
 	var w, h int = 640, 480
 
-	figure, err := canvas.NewFigure(float64(w), float64(h))
+	fig, err := canvas.NewFigure(float64(w), float64(h))
 	if err != nil {
 		return nil, err
 	}
@@ -83,15 +79,17 @@ func plot(X, Y []float64) (draw.Image, error) {
 	bg := image.NewRGBA(image.Rect(0, 0, w, h))
 	draw.Draw(bg, bg.Bounds(), &image.Uniform{blue}, image.ZP, draw.Src)
 
-	show(bg, figure)
+	show(bg, fig)
 
 	if len(X) != len(Y) {
-		return nil, fmt.Errorf("Dimensions mismatch (X[%v] != Y[%v])", len(X), len(Y))
+		return nil, fmt.Errorf(
+			"Dimensions mismatch (X[%v] != Y[%v])",
+			len(X), len(Y))
 	}
 
 	maxY := max(Y) / 0.9
 
-	ax := figure.NewAxes()
+	ax := fig.NewAxes()
 	show(bg, ax)
 	n := float64(len(Y))
 	var padding float64 = 0.1
@@ -99,7 +97,14 @@ func plot(X, Y []float64) (draw.Image, error) {
 	spaceW := barW / 2.0
 
 	for i, _ := range X {
-		bar, _ := canvas.NewBar(ax, padding+barW/2.0+float64(i)*(barW+spaceW), 0, barW, Y[i]/maxY)
+		bar, err := canvas.NewBar(ax,
+			padding+barW/2.0+float64(i)*(barW+spaceW),
+			0,
+			barW,
+			Y[i]/maxY)
+		if err != nil {
+			return nil, err
+		}
 		bar.XAlign = canvas.CenterAlign
 		show(bg, bar)
 	}
@@ -107,88 +112,6 @@ func plot(X, Y []float64) (draw.Image, error) {
 	return bg, nil
 }
 
-func readFlags() {
-	flag.IntVar(&test, "test", 123, "Testing flag")
-}
-
 func show(dst draw.Image, c canvas.Container) {
 	draw.Draw(dst, c.Bounds(), &image.Uniform{c.Color()}, image.ZP, draw.Src)
-}
-
-func homeH(w http.ResponseWriter, r *http.Request) {
-	// figure, err := canvas.NewFigure(400, 300)
-	// if err != nil {
-	// 	log.Fatal(err)
-	// }
-
-	// ax := figure.NewAxes()
-
-	// bar, _ := canvas.NewBar(ax, 0.2, 0, 0.1, 0.5)
-	// bar2, _ := canvas.NewBar(ax, 0.3, 0, 0.2, 0.7)
-	// bar2.BG = colornames.Black
-	// bar.XAlign = canvas.CenterAlign
-	// bar2.XAlign = canvas.CenterAlign
-
-	// bg := image.NewRGBA(image.Rect(0, 0, 640, 480))
-
-	// figure.Resize(640, 480)
-
-	// log.Println("[Fig]", figure)
-	// log.Println("[Axes]", ax)
-	// log.Println("[Bar]", bar)
-
-	// draw.Draw(bg, bg.Bounds(), &image.Uniform{blue}, image.ZP, draw.Src)
-
-	// log.Println("[Fig]", figure.Bounds())
-	// show(bg, figure)
-	// log.Println("[Axes]", ax.Bounds())
-	// show(bg, ax)
-	// log.Println("[Bar]", bar.Bounds())
-	// show(bg, bar)
-	// log.Println(ax.Color())
-
-	// rect := bar2.Bounds()
-	// Border(bg, rect, 2, &image.Uniform{blue}, rect.Min, draw.Src)
-
-	x := []float64{1, 2, 3, 4, 5, 6}
-	y := []float64{1, 1, 2, 4, 1, 10}
-	bg, _ := plot(x, y)
-
-	png.Encode(w, bg)
-
-}
-
-func main() {
-	rand.Seed(int64(time.Now().Second()))
-	readFlags()
-	flag.Parse()
-	log.Println("test variable", test)
-	log.Println(runtime.GOOS)
-
-	http.HandleFunc("/", homeH)
-
-	// url := fmt.Sprintf("http://localhost:%d/", 1234)
-
-	log.Println(http.ListenAndServe(":8000", nil))
-
-}
-
-func open(name string) error {
-	var (
-		cmd  string
-		args []string
-	)
-
-	switch runtime.GOOS {
-	case "windows":
-		cmd = "cmd"
-		args = []string{"/c", "start"}
-	case "darwin":
-		cmd = "open"
-	default:
-		cmd = "xdg-open"
-	}
-	args = append(args, name)
-
-	return exec.Command(cmd, args...).Start()
 }

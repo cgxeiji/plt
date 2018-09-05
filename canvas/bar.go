@@ -35,7 +35,9 @@ func NewBar(parent *Axes, dims ...float64) (*Bar, error) {
 		min = [2]float64{dims[0], dims[1]}
 		max = [2]float64{dims[2], dims[3]}
 	default:
-		return &Bar{}, fmt.Errorf("Dimensions not valid")
+		return &Bar{}, fmt.Errorf(
+			"Error while creating Bar: Dimensions %v of length %v not valid",
+			dims, len(dims))
 	}
 
 	var bar Bar
