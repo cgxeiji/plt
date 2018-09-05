@@ -58,6 +58,20 @@ func Border(dst draw.Image, r image.Rectangle, w int, src image.Image,
 		src, sp.Add(image.Pt(-w, 0)), op)
 }
 
+func max(s []float64) float64 {
+	if len(s) <= 0 {
+		log.Panic("max(s) on an empty slice")
+	}
+	var m float64 = s[0]
+	for _, v := range s {
+		if v > m {
+			m = v
+		}
+	}
+
+	return m
+}
+
 func plot(X, Y []float64) (draw.Image, error) {
 	var w, h int = 640, 480
 
@@ -75,6 +89,8 @@ func plot(X, Y []float64) (draw.Image, error) {
 		return nil, fmt.Errorf("Dimensions mismatch (X[%v] != Y[%v])", len(X), len(Y))
 	}
 
+	maxY := max(Y) / 0.9
+
 	ax := figure.NewAxes()
 	show(bg, ax)
 	n := float64(len(Y))
@@ -83,7 +99,7 @@ func plot(X, Y []float64) (draw.Image, error) {
 	spaceW := barW / 2.0
 
 	for i, _ := range X {
-		bar, _ := canvas.NewBar(ax, padding+barW/2.0+float64(i)*(barW+spaceW), 0, barW, Y[i])
+		bar, _ := canvas.NewBar(ax, padding+barW/2.0+float64(i)*(barW+spaceW), 0, barW, Y[i]/maxY)
 		bar.XAlign = canvas.CenterAlign
 		show(bg, bar)
 	}
@@ -134,8 +150,8 @@ func homeH(w http.ResponseWriter, r *http.Request) {
 	// rect := bar2.Bounds()
 	// Border(bg, rect, 2, &image.Uniform{blue}, rect.Min, draw.Src)
 
-	x := []float64{0.1, 0.2, 0.3, 0.4, 0.5}
-	y := []float64{0.1, 0.1, 0.2, 0.4, 0.1}
+	x := []float64{1, 2, 3, 4, 5, 6}
+	y := []float64{1, 1, 2, 4, 1, 10}
 	bg, _ := plot(x, y)
 
 	png.Encode(w, bg)
