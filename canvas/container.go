@@ -8,8 +8,12 @@ import (
 )
 
 const LeftAlign byte = 0
+const BottomAlign byte = 0
+
 const CenterAlign byte = 1
+
 const RightAlign byte = 2
+const TopAlign byte = 2
 
 type Renderer interface {
 	Vector() mat.Matrix
@@ -42,8 +46,8 @@ func transform(r Renderer) *mat.Dense {
 		if i == max_len {
 			break
 		}
-		h := fmt.Sprintf("T%v =", i)
-		mp(h, t)
+		// h := fmt.Sprintf("T%v =", i)
+		// mp(h, t)
 		trans.Product(trans, t)
 	}
 
@@ -113,7 +117,7 @@ func (p *Primitive) Bounds() image.Rectangle {
 	x1 = int(v.At(0, 1))
 	y1 = int(v.At(1, 1))
 
-	fmt.Println("x0:", x0, "y0:", y0, "x1:", x1, "y1:", y1)
+	// fmt.Println("x0:", x0, "y0:", y0, "x1:", x1, "y1:", y1)
 
 	return image.Rect(min(x0, x1), min(y0, y1), max(x0, x1), max(y0, y1))
 }
@@ -123,7 +127,8 @@ func (p *Primitive) Color() color.RGBA {
 }
 
 func (p *Primitive) String() string {
-	return fmt.Sprintf("Primitive {T: %v, Origin: %v, Size: %v}", p.T, p.Origin, p.Size)
+	b := p.Bounds()
+	return fmt.Sprintf("Primitive {T: %v, Origin: %v (pixels: %v), Size: %v (pixels: %v)}", p.T, p.Origin, b.Min, p.Size, b.Size())
 }
 
 type Container interface {
