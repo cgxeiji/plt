@@ -11,7 +11,7 @@ type Axes struct {
 	Parent *Figure
 }
 
-func NewAxes(parent *Figure, dims ...float64) (Axes, error) {
+func NewAxes(parent *Figure, dims ...float64) (*Axes, error) {
 	var o, s [2]float64
 
 	switch l := len(dims); l {
@@ -19,7 +19,7 @@ func NewAxes(parent *Figure, dims ...float64) (Axes, error) {
 		o = [2]float64{dims[0], dims[1]}
 		s = [2]float64{dims[2], dims[3]}
 	default:
-		return Axes{}, fmt.Errorf("Dimensions not valid")
+		return &Axes{}, fmt.Errorf("Dimensions not valid")
 	}
 
 	var ax Axes
@@ -35,5 +35,14 @@ func NewAxes(parent *Figure, dims ...float64) (Axes, error) {
 	ax.T = append(ax.T, Tc)
 	ax.BG = colornames.White
 
-	return ax, nil
+	return &ax, nil
+}
+
+type Axis struct {
+	Primitive
+	Parent *Axes
+}
+
+func NewAxis(parent *Axes, which byte) {
+
 }
