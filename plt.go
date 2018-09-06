@@ -3,7 +3,6 @@ package plt
 
 import (
 	"fmt"
-	"github.com/cgxeiji/plt/bag/pen"
 	"github.com/cgxeiji/plt/canvas"
 	"image"
 	"image/color"
@@ -90,8 +89,10 @@ func Bar(X, Y []float64) (draw.Image, error) {
 
 	maxY := max(Y) / 0.9
 
-	ax := fig.NewAxes()
+	ax, _ := canvas.NewAxes(fig, 0.1, 0.1, 0.8, 0.8)
 	show(bg, ax)
+	showBorder(bg, ax)
+
 	n := float64(len(Y))
 	var padding float64 = 0.1
 	barW := (2.0 - 4.0*padding) / (3*n - 1)
@@ -110,11 +111,13 @@ func Bar(X, Y []float64) (draw.Image, error) {
 		show(bg, bar)
 	}
 
-	pen.Line(bg, image.Pt(100, 90), image.Pt(300, 30), 20, blue)
-
 	return bg, nil
 }
 
 func show(dst draw.Image, c canvas.Container) {
 	draw.Draw(dst, c.Bounds(), &image.Uniform{c.Color()}, image.ZP, draw.Src)
+}
+
+func showBorder(dst draw.Image, c canvas.Container) {
+	border(dst, c.Bounds(), -5, &image.Uniform{black}, image.ZP, draw.Src)
 }
