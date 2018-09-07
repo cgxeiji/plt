@@ -3,9 +3,11 @@ package plt
 
 import (
 	"github.com/cgxeiji/plt/canvas"
+	"github.com/golang/freetype"
 	"image"
 	"image/color"
 	"image/draw"
+	"io/ioutil"
 	"log"
 )
 
@@ -65,6 +67,19 @@ func max(s []float64) float64 {
 	return m
 }
 
+func font() *freetype.Context {
+	fontBytes, _ := ioutil.ReadFile("luxisr.ttf")
+	f, _ := freetype.ParseFont(fontBytes)
+
+	c := freetype.NewContext()
+	c.SetDPI(300)
+	c.SetFont(f)
+	c.SetFontSize(12)
+	c.SetSrc(image.Black)
+
+	return c
+}
+
 // Bar creates a draw.Image struct given X and Y slices of []float64.
 // X and Y must have the same length.
 func Bar(X, Y []float64) (draw.Image, error) {
@@ -88,6 +103,12 @@ func Bar(X, Y []float64) (draw.Image, error) {
 	for _, c := range ax.Children {
 		show(bg, c)
 	}
+
+	c := font()
+
+	c.SetDst(bg)
+	c.SetClip(bg.Bounds())
+	c.DrawString("Test text", freetype.Pt(10, 10+int(c.PointToFixed(12)>>6)))
 
 	return bg, nil
 }
