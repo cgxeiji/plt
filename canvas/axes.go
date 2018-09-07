@@ -36,7 +36,7 @@ func NewAxes(parent *Figure, dims ...float64) (*Axes, error) {
 	})
 	ax.T = append(ax.T, parent.T...)
 	ax.T = append(ax.T, Tc)
-	ax.BG = colornames.White
+	ax.FillColor = colornames.White
 
 	return &ax, nil
 }
@@ -112,7 +112,7 @@ func NewAxis(parent *Axes, which byte) (*Axis, error) {
 	Tc := I
 	ax.T = append(ax.T, parent.T...)
 	ax.T = append(ax.T, Tc)
-	ax.BG = colornames.Black
+	ax.FillColor = colornames.Black
 
 	return &ax, nil
 }

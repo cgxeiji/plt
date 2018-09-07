@@ -54,7 +54,7 @@ func NewFigure(dims ...float64) (*Figure, error) {
 	})
 	fig.T = append(fig.T, T, Tc)
 	fig.Resize(max[0], max[1])
-	fig.BG = colornames.Gray
+	fig.FillColor = colornames.Gray
 
 	return &fig, nil
 }

@@ -59,10 +59,10 @@ func transform(r Renderer) *mat.Dense {
 }
 
 type Primitive struct {
-	Origin, Size   [2]float64
-	T              []*mat.Dense
-	BG             color.RGBA
-	XAlign, YAlign byte
+	Origin, Size           [2]float64
+	T                      []*mat.Dense
+	FillColor, StrokeColor color.RGBA
+	XAlign, YAlign         byte
 }
 
 func (p *Primitive) Vector() mat.Matrix {
@@ -123,7 +123,7 @@ func (p *Primitive) Bounds() image.Rectangle {
 }
 
 func (p *Primitive) Color() color.RGBA {
-	return p.BG
+	return p.FillColor
 }
 
 func (p *Primitive) String() string {
