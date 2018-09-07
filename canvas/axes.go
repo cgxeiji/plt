@@ -5,11 +5,13 @@ import (
 	"golang.org/x/image/colornames"
 	"gonum.org/v1/gonum/mat"
 	"image"
+	"log"
 )
 
 type Axes struct {
 	Primitive
-	Parent *Figure
+	Parent   *Figure
+	Children []Container
 }
 
 func NewAxes(parent *Figure, dims ...float64) (*Axes, error) {
@@ -37,6 +39,52 @@ func NewAxes(parent *Figure, dims ...float64) (*Axes, error) {
 	ax.BG = colornames.White
 
 	return &ax, nil
+}
+
+func maxSlice(s []float64) float64 {
+	if len(s) <= 0 {
+		log.Panic("max(s) on an empty slice")
+	}
+	var m float64 = s[0]
+	for _, v := range s {
+		if v > m {
+			m = v
+		}
+	}
+
+	return m
+}
+
+func (ax *Axes) BarPlot(X, Y []float64) error {
+	if X != nil {
+		if len(X) != len(Y) {
+			return fmt.Errorf(
+				"Dimensions mismatch (X[%v] != Y[%v])",
+				len(X), len(Y))
+		}
+	}
+
+	maxY := maxSlice(Y) / 0.9
+
+	n := float64(len(Y))
+	var padding float64 = 0.1
+	barW := (2.0 - 4.0*padding) / (3*n - 1)
+	spaceW := barW / 2.0
+
+	for i, _ := range Y {
+		bar, err := NewBar(ax,
+			padding+barW/2.0+float64(i)*(barW+spaceW),
+			0,
+			barW,
+			Y[i]/maxY)
+		if err != nil {
+			return err
+		}
+		bar.XAlign = CenterAlign
+		ax.Children = append(ax.Children, bar)
+	}
+
+	return nil
 }
 
 type Axis struct {

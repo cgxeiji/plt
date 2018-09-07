@@ -2,7 +2,6 @@
 package plt
 
 import (
-	"fmt"
 	"github.com/cgxeiji/plt/canvas"
 	"image"
 	"image/color"
@@ -77,44 +76,27 @@ func Bar(X, Y []float64) (draw.Image, error) {
 	}
 
 	bg := image.NewRGBA(image.Rect(0, 0, w, h))
-	draw.Draw(bg, bg.Bounds(), &image.Uniform{blue}, image.ZP, draw.Src)
 
 	show(bg, fig)
-
-	if len(X) != len(Y) {
-		return nil, fmt.Errorf(
-			"Dimensions mismatch (X[%v] != Y[%v])",
-			len(X), len(Y))
-	}
-
-	maxY := max(Y) / 0.9
 
 	ax, _ := canvas.NewAxes(fig, 0.1, 0.1, 0.8, 0.8)
 	show(bg, ax)
 	showBorder(bg, ax)
 
-	n := float64(len(Y))
-	var padding float64 = 0.1
-	barW := (2.0 - 4.0*padding) / (3*n - 1)
-	spaceW := barW / 2.0
+	ax.BarPlot(X, Y)
 
-	for i, _ := range X {
-		bar, err := canvas.NewBar(ax,
-			padding+barW/2.0+float64(i)*(barW+spaceW),
-			0,
-			barW,
-			Y[i]/maxY)
-		if err != nil {
-			return nil, err
-		}
-		bar.XAlign = canvas.CenterAlign
-		show(bg, bar)
+	for _, c := range ax.Children {
+		show(bg, c)
 	}
 
 	return bg, nil
 }
 
 func show(dst draw.Image, c canvas.Container) {
+	draw.Draw(dst, c.Bounds(), &image.Uniform{c.Color()}, image.ZP, draw.Src)
+}
+
+func Render(dst draw.Image, c canvas.Container) {
 	draw.Draw(dst, c.Bounds(), &image.Uniform{c.Color()}, image.ZP, draw.Src)
 }
 
