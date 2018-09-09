@@ -144,5 +144,4 @@ type Container interface {
 	Bounds() image.Rectangle
 	Color() color.RGBA
 	Render(draw.Image)
-	RelativeOrigin() [2]float64
 }
