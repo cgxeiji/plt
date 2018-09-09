@@ -1,18 +1,22 @@
 package main
 
 import (
+	"fmt"
 	"github.com/cgxeiji/plt"
 	"github.com/cgxeiji/plt/canvas"
 	"image"
 	"image/png"
 	"log"
 	"net/http"
+	"time"
 )
 
 func main() {
 	log.Println("Serving on 'localhost:8000'")
 
 	http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
+		startTime := time.Now()
+
 		plot := image.NewRGBA(image.Rect(0, 0, 1080, 1920))
 
 		x := []string{"Jan", "Feb", "Mar", "Apr", "May", "Jun"}
@@ -53,9 +57,13 @@ func main() {
 		}
 
 		png.Encode(w, plot)
+
+		fmt.Println("Rendered in:", time.Now().Sub(startTime))
 	})
 
 	http.HandleFunc("/simple", func(w http.ResponseWriter, r *http.Request) {
+		startTime := time.Now()
+
 		x := []string{"Jan", "Feb", "Mar", "Apr", "May", "Jun"}
 		y := []float64{1, 1, 2, 4, 1, 10}
 		plot, err := plt.Bar(x, y)
@@ -64,6 +72,7 @@ func main() {
 		}
 
 		png.Encode(w, plot)
+		fmt.Println("Rendered in:", time.Now().Sub(startTime))
 	})
 
 	log.Println(http.ListenAndServe(":8000", nil))
