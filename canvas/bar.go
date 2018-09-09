@@ -6,6 +6,7 @@ import (
 	"gonum.org/v1/gonum/mat"
 )
 
+// Bar is a struct that contains the information necessary to render a single bar in a chart.
 type Bar struct {
 	Primitive
 	Parent *Axes
@@ -17,6 +18,8 @@ func (b *Bar) String() string {
 	return fmt.Sprintf("%v\n ...Bar {Value: %v, Location: %v}", b.Primitive.String(), b.Value, b.Loc)
 }
 
+// NewBar creates a new *Bar struct belonging to a parent Axes.
+// NewBar takes a parent *Axes and a dims [4]float64{startX, startY, width, value(heigth)}
 func NewBar(parent *Axes, dims ...float64) (*Bar, error) {
 	var min, max [2]float64
 
