@@ -5,6 +5,7 @@ import (
 	"golang.org/x/image/colornames"
 	"gonum.org/v1/gonum/mat"
 	"image"
+	"image/draw"
 	"log"
 )
 
@@ -84,7 +85,7 @@ func (ax *Axes) BarPlot(X []string, Y []float64) error {
 		ax.Children = append(ax.Children, bar)
 
 		if X != nil {
-			label, err := NewLabel(ax, bar.Origin[0], -0.04, X[i])
+			label, err := NewLabel(ax, bar.Origin[0], -0.05, X[i])
 			if err != nil {
 				log.Fatal(err)
 			}
@@ -132,6 +133,45 @@ func (ax *Axes) ScatterPlot(X, Y []float64) error {
 	}
 
 	return nil
+}
+
+func border(dst draw.Image, r image.Rectangle, w int, src image.Image,
+	sp image.Point, op draw.Op) {
+	// inside r
+	if w > 0 {
+		// top
+		draw.Draw(dst, image.Rect(r.Min.X, r.Min.Y, r.Max.X, r.Min.Y+w), src, sp, op)
+		// left
+		draw.Draw(dst, image.Rect(r.Min.X, r.Min.Y+w, r.Min.X+w, r.Max.Y-w),
+			src, sp.Add(image.Pt(0, w)), op)
+		// right
+		draw.Draw(dst, image.Rect(r.Max.X-w, r.Min.Y+w, r.Max.X, r.Max.Y-w),
+			src, sp.Add(image.Pt(r.Dx()-w, w)), op)
+		// bottom
+		draw.Draw(dst, image.Rect(r.Min.X, r.Max.Y-w, r.Max.X, r.Max.Y),
+			src, sp.Add(image.Pt(0, r.Dy()-w)), op)
+		return
+	}
+
+	// outside r;
+	w = -w
+	// top
+	draw.Draw(dst, image.Rect(r.Min.X-w, r.Min.Y-w, r.Max.X+w, r.Min.Y),
+		src, sp.Add(image.Pt(-w, -w)), op)
+	// left
+	draw.Draw(dst, image.Rect(r.Min.X-w, r.Min.Y, r.Min.X, r.Max.Y), src,
+		sp.Add(image.Pt(-w, 0)), op)
+	// right
+	draw.Draw(dst, image.Rect(r.Max.X, r.Min.Y, r.Max.X+w, r.Max.Y), src,
+		sp.Add(image.Pt(r.Dx(), 0)), op)
+	// bottom
+	draw.Draw(dst, image.Rect(r.Min.X-w, r.Max.Y, r.Max.X+w, r.Max.Y+w),
+		src, sp.Add(image.Pt(-w, 0)), op)
+}
+
+func (ax *Axes) Render(dst draw.Image) {
+	ax.Primitive.Render(dst)
+	border(dst, ax.Bounds(), -2, &image.Uniform{colornames.Black}, image.ZP, draw.Src)
 }
 
 type Axis struct {

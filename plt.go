@@ -94,7 +94,6 @@ func Bar(X []string, Y []float64) (draw.Image, error) {
 
 	ax, _ := canvas.NewAxes(fig, 0.1, 0.1, 0.8, 0.8)
 	ax.Render(bg)
-	showBorder(bg, ax)
 
 	ax.BarPlot(X, Y)
 
