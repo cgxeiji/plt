@@ -42,9 +42,10 @@ func main() {
 		}
 		ax2.Render(plot)
 
-		y = []float64{1.6, 2.2, 3.4, 0.2, 0, 0.2, 0.5}
+		sx := []float64{0.0, 0.1, 1.0, 3.0, 3.2, 3.3, 5.0}
+		sy := []float64{1.6, 2.2, 3.4, 0.2, 0.0, 0.2, 0.5}
 
-		ax2.BarPlot(nil, y)
+		ax2.ScatterPlot(sx, sy)
 
 		for _, c := range ax2.Children {
 			c.Render(plot)

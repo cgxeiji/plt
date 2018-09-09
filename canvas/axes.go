@@ -84,7 +84,45 @@ func (ax *Axes) BarPlot(X []string, Y []float64) error {
 		ax.Children = append(ax.Children, bar)
 
 		if X != nil {
-			label, err := NewLabel(ax, bar.Origin[0], bar.Origin[1]-0.04, X[i])
+			label, err := NewLabel(ax, bar.Origin[0], -0.04, X[i])
+			if err != nil {
+				log.Fatal(err)
+			}
+
+			ax.Children = append(ax.Children, label)
+		}
+	}
+
+	return nil
+}
+
+func vmap(value, fmin, fmax, tmin, tmax float64) float64 {
+	return (value-fmin)/(fmax-fmin)*(tmax-tmin) + tmin
+}
+
+func (ax *Axes) ScatterPlot(X, Y []float64) error {
+	if X != nil {
+		if len(X) != len(Y) {
+			return fmt.Errorf(
+				"Dimensions mismatch (X[%v] != Y[%v])",
+				len(X), len(Y))
+		}
+	}
+
+	maxY := maxSlice(Y) / 0.9
+	maxX := maxSlice(X)
+
+	var padding float64 = 0.1
+
+	for i, _ := range Y {
+		point, err := NewScatterPoint(ax, vmap(X[i], 0, maxX, padding, 1-padding), Y[i]/maxY)
+		if err != nil {
+			return err
+		}
+		ax.Children = append(ax.Children, point)
+
+		if X != nil {
+			label, err := NewLabel(ax, point.Origin[0], -0.04, fmt.Sprint(X[i]))
 			if err != nil {
 				log.Fatal(err)
 			}
