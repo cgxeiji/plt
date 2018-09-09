@@ -55,7 +55,7 @@ func maxSlice(s []float64) float64 {
 	return m
 }
 
-func (ax *Axes) BarPlot(X, Y []float64) error {
+func (ax *Axes) BarPlot(X []string, Y []float64) error {
 	if X != nil {
 		if len(X) != len(Y) {
 			return fmt.Errorf(
@@ -82,6 +82,15 @@ func (ax *Axes) BarPlot(X, Y []float64) error {
 		}
 		bar.XAlign = CenterAlign
 		ax.Children = append(ax.Children, bar)
+
+		if X != nil {
+			label, err := NewLabel(ax, bar.Origin[0], bar.Origin[1]-0.04, X[i])
+			if err != nil {
+				log.Fatal(err)
+			}
+
+			ax.Children = append(ax.Children, label)
+		}
 	}
 
 	return nil

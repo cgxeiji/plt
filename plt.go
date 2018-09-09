@@ -2,7 +2,6 @@
 package plt
 
 import (
-	"fmt"
 	"github.com/cgxeiji/plt/canvas"
 	"image"
 	"image/color"
@@ -81,7 +80,7 @@ func max(s []float64) float64 {
 
 // Bar creates a draw.Image struct given X and Y slices of []float64.
 // X and Y must have the same length.
-func Bar(X, Y []float64) (draw.Image, error) {
+func Bar(X []string, Y []float64) (draw.Image, error) {
 	var w, h int = 1920, 1080
 
 	fig, err := canvas.NewFigure(float64(w), float64(h))
@@ -91,7 +90,7 @@ func Bar(X, Y []float64) (draw.Image, error) {
 
 	bg := image.NewRGBA(image.Rect(0, 0, w, h))
 
-	show(bg, fig)
+	fig.Render(bg)
 
 	ax, _ := canvas.NewAxes(fig, 0.1, 0.1, 0.8, 0.8)
 	ax.Render(bg)
@@ -99,19 +98,8 @@ func Bar(X, Y []float64) (draw.Image, error) {
 
 	ax.BarPlot(X, Y)
 
-	typer, err := canvas.NewTyper()
-	if err != nil {
-		log.Fatal(err)
-	}
-
-	for i, c := range ax.Children {
+	for _, c := range ax.Children {
 		c.Render(bg)
-
-		label, err := canvas.NewLabel(ax, c.RelativeOrigin()[0], c.RelativeOrigin()[1]-0.03, fmt.Sprint(X[i]))
-		if err != nil {
-			log.Fatal(err)
-		}
-		label.Render(bg, typer)
 	}
 
 	return bg, nil

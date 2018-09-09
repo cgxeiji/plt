@@ -9,6 +9,7 @@ import (
 	"image"
 	"image/draw"
 	"io/ioutil"
+	"log"
 )
 
 type Label struct {
@@ -17,10 +18,10 @@ type Label struct {
 	Text   string
 }
 
-func (l *Label) Render(dst draw.Image, typeFont *Typer) {
+func (l *Label) Render(dst draw.Image) {
 	bounds := l.Bounds()
 	location := bounds.Min
-	typeFont.Render(dst, location.X, location.Y, l.Text)
+	DefaultTyper.Render(dst, location.X, location.Y, l.Text)
 }
 
 func NewLabel(parent *Axes, x, y float64, text string) (*Label, error) {
@@ -37,6 +38,8 @@ func NewLabel(parent *Axes, x, y float64, text string) (*Label, error) {
 
 	return &l, nil
 }
+
+var DefaultTyper *Typer = NewDefaultTyper()
 
 type Typer struct {
 	Drawer *font.Drawer
@@ -83,4 +86,12 @@ func NewTyper() (*Typer, error) {
 	}
 
 	return t, nil
+}
+
+func NewDefaultTyper() *Typer {
+	t, err := NewTyper()
+	if err != nil {
+		log.Fatal(err)
+	}
+	return t
 }
