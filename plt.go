@@ -2,6 +2,7 @@
 package plt
 
 import (
+	"fmt"
 	"github.com/cgxeiji/plt/canvas"
 	"image"
 	"image/color"
@@ -93,23 +94,25 @@ func Bar(X, Y []float64) (draw.Image, error) {
 	show(bg, fig)
 
 	ax, _ := canvas.NewAxes(fig, 0.1, 0.1, 0.8, 0.8)
-	show(bg, ax)
+	ax.Render(bg)
 	showBorder(bg, ax)
 
 	ax.BarPlot(X, Y)
-
-	for _, c := range ax.Children {
-		show(bg, c)
-	}
 
 	typer, err := canvas.NewTyper()
 	if err != nil {
 		log.Fatal(err)
 	}
 
-	typer.Render(bg, w/2, h/2, "Testing text")
+	for i, c := range ax.Children {
+		c.Render(bg)
 
-	border(bg, image.Rect(100, 100, 200, 200).Bounds(), -5, &image.Uniform{black}, image.ZP, draw.Src)
+		label, err := canvas.NewLabel(ax, c.RelativeOrigin()[0], c.RelativeOrigin()[1]-0.03, fmt.Sprint(X[i]))
+		if err != nil {
+			log.Fatal(err)
+		}
+		label.Render(bg, typer)
+	}
 
 	return bg, nil
 }

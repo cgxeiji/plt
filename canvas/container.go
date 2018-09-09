@@ -5,6 +5,7 @@ import (
 	"gonum.org/v1/gonum/mat"
 	"image"
 	"image/color"
+	"image/draw"
 )
 
 const LeftAlign byte = 0
@@ -93,6 +94,10 @@ func (p *Primitive) Transform() []*mat.Dense {
 	return p.T
 }
 
+func (p *Primitive) Render(dst draw.Image) {
+	draw.Draw(dst, p.Bounds(), &image.Uniform{p.Color()}, image.ZP, draw.Src)
+}
+
 func min(a, b int) int {
 	if a > b {
 		return b
@@ -131,7 +136,13 @@ func (p *Primitive) String() string {
 	return fmt.Sprintf("Primitive {T: %v, Origin: %v (pixels: %v), Size: %v (pixels: %v)}", p.T, p.Origin, b.Min, p.Size, b.Size())
 }
 
+func (p *Primitive) RelativeOrigin() [2]float64 {
+	return p.Origin
+}
+
 type Container interface {
 	Bounds() image.Rectangle
 	Color() color.RGBA
+	Render(draw.Image)
+	RelativeOrigin() [2]float64
 }
