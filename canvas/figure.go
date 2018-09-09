@@ -23,6 +23,31 @@ func (f *Figure) NewAxes() *Axes {
 	return ax
 }
 
+func (f *Figure) SubAxes(rows, cols int) ([]*Axes, error) {
+	var axes []*Axes
+
+	n := float64(cols)
+	var padding float64 = 0.05
+	spaceW := padding
+	axW := (1 - 2*padding - (n-1)*spaceW) / n
+
+	n = float64(rows)
+	spaceH := padding
+	axH := (1 - 2*padding - (n-1)*spaceH) / n
+
+	for j := rows - 1; j >= 0; j-- {
+		for i := 0; i < cols; i++ {
+			ax, err := NewAxes(f, padding+float64(i)*(axW+spaceW), padding+float64(j)*(axH+spaceH), axW, axH)
+			if err != nil {
+				return nil, err
+			}
+			axes = append(axes, ax)
+		}
+	}
+
+	return axes, nil
+}
+
 func NewFigure(dims ...float64) (*Figure, error) {
 	var min, max [2]float64
 
