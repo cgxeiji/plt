@@ -46,13 +46,12 @@ if err != nil {
 	log.Panic(err)
 }
 
-fig.Render(plot)
-
 axes, err := fig.SubAxes(3, 1)
 if err != nil {
 	log.Panic(err)
 }
-axes[0].Render(plot)
-axes[1].Render(plot)
-axes[2].Render(plot)
+
+fig.RenderAll(plot)
+
+png.Encode(w, plot)
 ```

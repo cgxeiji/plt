@@ -64,6 +64,7 @@ type Primitive struct {
 	T                      []*mat.Dense
 	FillColor, StrokeColor color.RGBA
 	XAlign, YAlign         byte
+	Children               []Container
 }
 
 func (p *Primitive) Vector() mat.Matrix {
@@ -96,6 +97,13 @@ func (p *Primitive) Transform() []*mat.Dense {
 
 func (p *Primitive) Render(dst draw.Image) {
 	draw.Draw(dst, p.Bounds(), &image.Uniform{p.Color()}, image.ZP, draw.Src)
+}
+
+func (p *Primitive) RenderAll(dst draw.Image) {
+	p.Render(dst)
+	for _, child := range p.Children {
+		child.RenderAll(dst)
+	}
 }
 
 func min(a, b int) int {
@@ -144,4 +152,5 @@ type Container interface {
 	Bounds() image.Rectangle
 	Color() color.RGBA
 	Render(draw.Image)
+	RenderAll(draw.Image)
 }

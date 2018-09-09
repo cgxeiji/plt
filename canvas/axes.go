@@ -11,8 +11,7 @@ import (
 
 type Axes struct {
 	Primitive
-	Parent   *Figure
-	Children []Container
+	Parent *Figure
 }
 
 func NewAxes(parent *Figure, dims ...float64) (*Axes, error) {
@@ -38,6 +37,8 @@ func NewAxes(parent *Figure, dims ...float64) (*Axes, error) {
 	ax.T = append(ax.T, parent.T...)
 	ax.T = append(ax.T, Tc)
 	ax.FillColor = colornames.White
+
+	parent.Children = append(parent.Children, &ax)
 
 	return &ax, nil
 }
@@ -82,15 +83,12 @@ func (ax *Axes) BarPlot(X []string, Y []float64) error {
 			return err
 		}
 		bar.XAlign = CenterAlign
-		ax.Children = append(ax.Children, bar)
 
 		if X != nil {
-			label, err := NewLabel(ax, bar.Origin[0], -0.05, X[i])
+			_, err := NewLabel(ax, bar.Origin[0], -0.05, X[i])
 			if err != nil {
 				log.Fatal(err)
 			}
-
-			ax.Children = append(ax.Children, label)
 		}
 	}
 
@@ -120,15 +118,13 @@ func (ax *Axes) ScatterPlot(X, Y []float64) error {
 		if err != nil {
 			return err
 		}
-		ax.Children = append(ax.Children, point)
 
 		if X != nil {
-			label, err := NewLabel(ax, point.Origin[0], -0.04, fmt.Sprint(X[i]))
+			_, err := NewLabel(ax, point.Origin[0], -0.04, fmt.Sprint(X[i]))
 			if err != nil {
 				log.Fatal(err)
 			}
 
-			ax.Children = append(ax.Children, label)
 		}
 	}
 
@@ -172,6 +168,13 @@ func border(dst draw.Image, r image.Rectangle, w int, src image.Image,
 func (ax *Axes) Render(dst draw.Image) {
 	ax.Primitive.Render(dst)
 	border(dst, ax.Bounds(), -2, &image.Uniform{colornames.Black}, image.ZP, draw.Src)
+}
+
+func (ax *Axes) RenderAll(dst draw.Image) {
+	ax.Render(dst)
+	for _, child := range ax.Children {
+		child.RenderAll(dst)
+	}
 }
 
 type Axis struct {

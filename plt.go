@@ -90,17 +90,10 @@ func Bar(X []string, Y []float64) (draw.Image, error) {
 
 	bg := image.NewRGBA(image.Rect(0, 0, w, h))
 
-	fig.Render(bg)
-
 	ax, _ := canvas.NewAxes(fig, 0.1, 0.1, 0.8, 0.8)
-	ax.Render(bg)
-
 	ax.BarPlot(X, Y)
 
-	for _, c := range ax.Children {
-		c.Render(bg)
-	}
-
+	fig.RenderAll(bg)
 	return bg, nil
 }
 
