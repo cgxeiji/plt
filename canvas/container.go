@@ -2,10 +2,11 @@ package canvas
 
 import (
 	"fmt"
-	"gonum.org/v1/gonum/mat"
 	"image"
 	"image/color"
 	"image/draw"
+
+	"gonum.org/v1/gonum/mat"
 )
 
 const LeftAlign byte = 0
@@ -99,6 +100,48 @@ func (p *Primitive) Render(dst draw.Image) {
 	draw.Draw(dst, p.Bounds(), &image.Uniform{p.Color()}, image.ZP, draw.Src)
 }
 
+type ToRender struct {
+	Bounds image.Rectangle
+	Src    *image.Uniform
+}
+
+func (p *Primitive) ToRender() <-chan *ToRender {
+	c := make(chan *ToRender)
+	
+	go func() {
+		defer close(c)
+		c <- &ToRender{
+			Bounds: p.Bounds(),
+			Src:    &image.Uniform{p.Color()},
+		}
+	}()
+
+	return c
+}
+
+func merger(cs ...<-chan *ToRender) <-chan *ToRender {
+	out := make(chan int)
+	var wg sync.WaitGroup
+	wg.Add(len(cs))
+	for _, c := range cs {
+		go func(c <-chan int) {
+			for v := range c {
+				out <- v
+			}
+			wg.Done()
+		}(c)
+	}
+	go func() {
+		wg.Wait()
+		close(out)
+	}()
+	return out
+}
+
+func Render(dst draw.Image, c Container) {
+	toRender := make(chan *ToRender, 1)
+}
+
 func min(a, b int) int {
 	if a > b {
 		return b
@@ -146,4 +189,5 @@ type Container interface {
 	Color() color.RGBA
 	Render(draw.Image)
 	GetChildren() []Container
+	ToRender() <-chan *ToRender
 }

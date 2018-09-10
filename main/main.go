@@ -2,11 +2,12 @@ package main
 
 import (
 	"fmt"
-	"github.com/cgxeiji/plt"
 	"image/png"
 	"log"
 	"net/http"
 	"time"
+
+	"github.com/cgxeiji/plt"
 )
 
 func main() {
@@ -49,6 +50,8 @@ func main() {
 
 		// Export with your favourite encoder
 		png.Encode(w, plot)
+
+		fmt.Println(<-fig.ToRender())
 
 		fmt.Println("Rendered in:", time.Now().Sub(startTime))
 	})
