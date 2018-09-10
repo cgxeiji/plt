@@ -99,13 +99,6 @@ func (p *Primitive) Render(dst draw.Image) {
 	draw.Draw(dst, p.Bounds(), &image.Uniform{p.Color()}, image.ZP, draw.Src)
 }
 
-func (p *Primitive) RenderAll(dst draw.Image) {
-	p.Render(dst)
-	for _, child := range p.Children {
-		child.RenderAll(dst)
-	}
-}
-
 func min(a, b int) int {
 	if a > b {
 		return b
@@ -144,13 +137,13 @@ func (p *Primitive) String() string {
 	return fmt.Sprintf("Primitive {T: %v, Origin: %v (pixels: %v), Size: %v (pixels: %v)}", p.T, p.Origin, b.Min, p.Size, b.Size())
 }
 
-func (p *Primitive) RelativeOrigin() [2]float64 {
-	return p.Origin
+func (p *Primitive) GetChildren() []Container {
+	return p.Children
 }
 
 type Container interface {
 	Bounds() image.Rectangle
 	Color() color.RGBA
 	Render(draw.Image)
-	RenderAll(draw.Image)
+	GetChildren() []Container
 }

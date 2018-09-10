@@ -4,7 +4,6 @@ import (
 	"fmt"
 	"github.com/cgxeiji/plt"
 	"github.com/cgxeiji/plt/canvas"
-	"image"
 	"image/png"
 	"log"
 	"net/http"
@@ -16,8 +15,6 @@ func main() {
 
 	http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
 		startTime := time.Now()
-
-		plot := image.NewRGBA(image.Rect(0, 0, 1080, 1920))
 
 		x := []string{"Jan", "Feb", "Mar", "Apr", "May", "Jun"}
 		y := []float64{1, 1, 2, 4, 1, 10}
@@ -40,7 +37,7 @@ func main() {
 
 		axes[2].ScatterPlot(sx, sy)
 
-		fig.RenderAll(plot)
+		plot := plt.Render(fig)
 
 		png.Encode(w, plot)
 

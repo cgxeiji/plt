@@ -24,10 +24,6 @@ func (l *Label) Render(dst draw.Image) {
 	DefaultTyper.Render(dst, location.X, location.Y, l.Text)
 }
 
-func (l *Label) RenderAll(dst draw.Image) {
-	l.Render(dst)
-}
-
 func NewLabel(parent *Axes, x, y float64, text string) (*Label, error) {
 	var l Label
 	l.Parent = parent

@@ -170,13 +170,6 @@ func (ax *Axes) Render(dst draw.Image) {
 	border(dst, ax.Bounds(), -2, &image.Uniform{colornames.Black}, image.ZP, draw.Src)
 }
 
-func (ax *Axes) RenderAll(dst draw.Image) {
-	ax.Render(dst)
-	for _, child := range ax.Children {
-		child.RenderAll(dst)
-	}
-}
-
 type Axis struct {
 	Primitive
 	W      int

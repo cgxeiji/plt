@@ -88,21 +88,30 @@ func Bar(X []string, Y []float64) (draw.Image, error) {
 		return nil, err
 	}
 
-	bg := image.NewRGBA(image.Rect(0, 0, w, h))
-
 	ax, _ := canvas.NewAxes(fig, 0.1, 0.1, 0.8, 0.8)
 	ax.BarPlot(X, Y)
 
-	fig.RenderAll(bg)
-	return bg, nil
+	plot := Render(fig)
+	return plot, nil
 }
 
 func show(dst draw.Image, c canvas.Container) {
 	draw.Draw(dst, c.Bounds(), &image.Uniform{c.Color()}, image.ZP, draw.Src)
 }
 
-func Render(dst draw.Image, c canvas.Container) {
-	draw.Draw(dst, c.Bounds(), &image.Uniform{c.Color()}, image.ZP, draw.Src)
+func Render(f *canvas.Figure) draw.Image {
+	dst := image.NewRGBA(f.Bounds())
+
+	renderAll(f, dst)
+
+	return dst
+}
+
+func renderAll(c canvas.Container, dst draw.Image) {
+	c.Render(dst)
+	for _, child := range c.GetChildren() {
+		renderAll(child, dst)
+	}
 }
 
 func showBorder(dst draw.Image, c canvas.Container) {
