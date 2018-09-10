@@ -65,19 +65,6 @@ func max(s []float64) float64 {
 	return m
 }
 
-// func font() *freetype.Context {
-// 	fontBytes, _ := ioutil.ReadFile("luxisr.ttf")
-// 	f, _ := freetype.ParseFont(fontBytes)
-//
-// 	c := freetype.NewContext()
-// 	c.SetDPI(300)
-// 	c.SetFont(f)
-// 	c.SetFontSize(12)
-// 	c.SetSrc(image.Black)
-//
-// 	return c
-// }
-
 // Bar creates a draw.Image struct given X and Y slices of []float64.
 // X and Y must have the same length.
 func Bar(X []string, Y []float64) (draw.Image, error) {
@@ -95,10 +82,6 @@ func Bar(X []string, Y []float64) (draw.Image, error) {
 	return plot, nil
 }
 
-func show(dst draw.Image, c canvas.Container) {
-	draw.Draw(dst, c.Bounds(), &image.Uniform{c.Color()}, image.ZP, draw.Src)
-}
-
 func Render(f *canvas.Figure) draw.Image {
 	dst := image.NewRGBA(f.Bounds())
 
@@ -112,8 +95,4 @@ func renderAll(c canvas.Container, dst draw.Image) {
 	for _, child := range c.GetChildren() {
 		renderAll(child, dst)
 	}
-}
-
-func showBorder(dst draw.Image, c canvas.Container) {
-	border(dst, c.Bounds(), -5, &image.Uniform{black}, image.ZP, draw.Src)
 }
