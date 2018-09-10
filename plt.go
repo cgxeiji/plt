@@ -16,12 +16,13 @@ var (
 	test int
 )
 
-// Bar creates a draw.Image struct given X and Y slices of []float64.
+// Bar creates a draw.Image struct given X and Y slices
+// of []string and []float64 respectively.
 // X and Y must have the same length.
 func Bar(X []string, Y []float64) (draw.Image, error) {
 	var w, h int = 1920, 1080
 
-	fig, err := canvas.NewFigure(float64(w), float64(h))
+	fig, err := canvas.NewFigure(w, h)
 	if err != nil {
 		return nil, err
 	}
@@ -33,6 +34,13 @@ func Bar(X []string, Y []float64) (draw.Image, error) {
 	return plot, nil
 }
 
+// Figure returns a *canvas.Figure struct with a size of
+// w and h in pixels (int).
+func Figure(w, h int) (*canvas.Figure, error) {
+	return canvas.NewFigure(w, h)
+}
+
+// Render draws a Figure with all its children into a draw.Image interface.
 func Render(f *canvas.Figure) draw.Image {
 	dst := image.NewRGBA(f.Bounds())
 

@@ -1,7 +1,6 @@
 package canvas
 
 import (
-	"fmt"
 	"golang.org/x/image/colornames"
 	"gonum.org/v1/gonum/mat"
 )
@@ -48,22 +47,11 @@ func (f *Figure) SubAxes(rows, cols int) ([]*Axes, error) {
 	return axes, nil
 }
 
-func NewFigure(dims ...float64) (*Figure, error) {
+func NewFigure(w, h int) (*Figure, error) {
 	var min, max [2]float64
 
-	switch l := len(dims); l {
-	case 0:
-		min = [2]float64{0, 0}
-		max = [2]float64{640, 480}
-	case 1:
-		min = [2]float64{0, 0}
-		max = [2]float64{dims[0], dims[0]}
-	case 2:
-		min = [2]float64{0, 0}
-		max = [2]float64{dims[0], dims[1]}
-	default:
-		return &Figure{}, fmt.Errorf("Dimensions not valid")
-	}
+	min = [2]float64{0, 0}
+	max = [2]float64{float64(w), float64(h)}
 
 	var fig Figure
 	fig.Origin = min

@@ -3,7 +3,6 @@ package main
 import (
 	"fmt"
 	"github.com/cgxeiji/plt"
-	"github.com/cgxeiji/plt/canvas"
 	"image/png"
 	"log"
 	"net/http"
@@ -18,7 +17,8 @@ func main() {
 
 		x := []string{"Jan", "Feb", "Mar", "Apr", "May", "Jun"}
 		y := []float64{1, 1, 2, 4, 1, 10}
-		fig, err := canvas.NewFigure(1080, 1920)
+
+		fig, err := plt.Figure(1080, 1920)
 		if err != nil {
 			log.Panic(err)
 		}
@@ -49,6 +49,7 @@ func main() {
 
 		x := []string{"Jan", "Feb", "Mar", "Apr", "May", "Jun"}
 		y := []float64{1, 1, 2, 4, 1, 10}
+
 		plot, err := plt.Bar(x, y)
 		if err != nil {
 			log.Panic(err)
