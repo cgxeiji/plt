@@ -1,15 +1,16 @@
 package canvas
 
 import (
+	"image"
+	"image/draw"
+	"io/ioutil"
+	"log"
+
 	"github.com/golang/freetype/truetype"
 	"golang.org/x/image/colornames"
 	"golang.org/x/image/font"
 	"golang.org/x/image/math/fixed"
 	"gonum.org/v1/gonum/mat"
-	"image"
-	"image/draw"
-	"io/ioutil"
-	"log"
 )
 
 type Label struct {
@@ -20,14 +21,17 @@ type Label struct {
 
 func (l *Label) Render(dst draw.Image) {
 	bounds := l.Bounds()
+	height := bounds.Max.Y - bounds.Min.Y
+	t, _ := NewTyper(height * 72 / 300) // TODO: Change for a faster typer initialization
 	location := bounds.Min
-	DefaultTyper.Render(dst, location.X, location.Y, l.Text)
+	t.Render(dst, location.X, location.Y, l.Text)
 }
 
-func NewLabel(parent *Axes, x, y float64, text string) (*Label, error) {
+func NewLabel(parent *Axes, x, y, h float64, text string) (*Label, error) {
 	var l Label
 	l.Parent = parent
 	l.Origin = [2]float64{x, y}
+	l.Size = [2]float64{0, h}
 	l.XAlign = CenterAlign
 	l.YAlign = CenterAlign
 	Tc := mat.DenseCopyOf(I)
@@ -40,7 +44,7 @@ func NewLabel(parent *Axes, x, y float64, text string) (*Label, error) {
 	return &l, nil
 }
 
-var DefaultTyper *Typer = NewDefaultTyper()
+var DefaultTyper = NewDefaultTyper()
 
 type Typer struct {
 	Drawer *font.Drawer
@@ -57,40 +61,44 @@ func (t *Typer) Render(dst draw.Image, X, Y int, text string) {
 	d.DrawString(text)
 }
 
-func NewTyper() (*Typer, error) {
-	bytes, err := ioutil.ReadFile("luxisr.ttf")
-	if err != nil {
-		return nil, err
-	}
-
-	ttf, err := truetype.Parse(bytes)
-	if err != nil {
-		return nil, err
-	}
-
+func NewTyper(size int) (*Typer, error) {
 	fg := image.Black
-
-	h := font.HintingNone
 
 	d := &font.Drawer{
 		Src: fg,
-		Face: truetype.NewFace(ttf, &truetype.Options{
-			Size:    12,
+		Face: truetype.NewFace(defaultFont, &truetype.Options{
+			Size:    float64(size),
 			DPI:     300,
-			Hinting: h,
+			Hinting: font.HintingNone,
 		}),
 	}
 
 	t := &Typer{
 		Drawer: d,
-		Height: fixed.I(12 * 300 / 72),
+		Height: fixed.I(size * 300 / 72),
 	}
 
 	return t, nil
 }
 
+var defaultFont = parseFont("luxisr.ttf")
+
+func parseFont(file string) *truetype.Font {
+	bytes, err := ioutil.ReadFile(file)
+	if err != nil {
+		log.Panic(err)
+	}
+
+	ttf, err := truetype.Parse(bytes)
+	if err != nil {
+		log.Panic(err)
+	}
+
+	return ttf
+}
+
 func NewDefaultTyper() *Typer {
-	t, err := NewTyper()
+	t, err := NewTyper(8)
 	if err != nil {
 		log.Fatal(err)
 	}

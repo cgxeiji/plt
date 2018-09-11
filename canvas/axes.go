@@ -2,11 +2,12 @@ package canvas
 
 import (
 	"fmt"
-	"golang.org/x/image/colornames"
-	"gonum.org/v1/gonum/mat"
 	"image"
 	"image/draw"
 	"log"
+
+	"golang.org/x/image/colornames"
+	"gonum.org/v1/gonum/mat"
 )
 
 type Axes struct {
@@ -85,7 +86,7 @@ func (ax *Axes) BarPlot(X []string, Y []float64) error {
 		bar.XAlign = CenterAlign
 
 		if X != nil {
-			_, err := NewLabel(ax, bar.Origin[0], -0.05, X[i])
+			_, err := NewLabel(ax, bar.Origin[0], -0.1, 0.08, X[i])
 			if err != nil {
 				log.Fatal(err)
 			}
@@ -120,7 +121,7 @@ func (ax *Axes) ScatterPlot(X, Y []float64) error {
 		}
 
 		if X != nil {
-			_, err := NewLabel(ax, point.Origin[0], -0.04, fmt.Sprint(X[i]))
+			_, err := NewLabel(ax, point.Origin[0], -0.1, 0.08, fmt.Sprint(X[i]))
 			if err != nil {
 				log.Fatal(err)
 			}

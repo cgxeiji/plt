@@ -2,10 +2,11 @@
 package plt
 
 import (
-	"github.com/cgxeiji/plt/canvas"
 	"image"
 	"image/color"
 	"image/draw"
+
+	"github.com/cgxeiji/plt/canvas"
 )
 
 var (
