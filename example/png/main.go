@@ -6,6 +6,8 @@ import (
 	"image/png"
 	"log"
 	"os"
+	"os/exec"
+	"runtime"
 	"time"
 
 	"github.com/cgxeiji/plt"
@@ -23,7 +25,7 @@ func main() {
 		y := []float64{1, 1, 2, 4, 1, 10}
 
 		// Create a Figure struct to start plotting
-		fig, err := plt.Figure(1080, 1920)
+		fig, err := plt.Figure(720, 1024)
 		if err != nil {
 			log.Panic(err)
 		}
@@ -67,6 +69,8 @@ func main() {
 		}
 
 		fmt.Println("Rendered in:", time.Now().Sub(startTime))
+
+		open("out.png")
 	} else {
 
 		startTime := time.Now()
@@ -98,5 +102,26 @@ func main() {
 		}
 
 		fmt.Println("Rendered in:", time.Now().Sub(startTime))
+
+		open("out.png")
 	}
+}
+
+func open(name string) error {
+	var (
+		cmd  string
+		args []string
+	)
+	switch runtime.GOOS {
+	case "windows":
+		cmd = "cmd"
+		args = []string{"/c", "start"}
+	case "darwin":
+		cmd = "open"
+	default:
+		cmd = "xdg-open"
+	}
+	args = append(args, name)
+	fmt.Println("Executing:", cmd, args)
+	return exec.Command(cmd, args...).Start()
 }
