@@ -5,6 +5,7 @@ import (
 	"image/color"
 	"image/draw"
 
+	"golang.org/x/image/colornames"
 	"gonum.org/v1/gonum/mat"
 )
 
@@ -23,7 +24,6 @@ const RightAxis = 3
 // Axis represents a Primitive for horizontal and vertical axes with Axes as its parent.
 type Axis struct {
 	Primitive
-	W        int
 	Min, Max float64
 	Type     byte
 	Parent   *Axes
@@ -50,8 +50,6 @@ func NewAxis(parent *Axes, location byte) (*Axis, error) {
 		o = [2]float64{0.9, 0}
 		s = [2]float64{0.2, 1}
 	}
-
-	ax.W = 2
 
 	ax.Parent = parent
 	ax.Type = location
@@ -95,11 +93,13 @@ func (a *Axis) Labels(X []string, padding float64) {
 		for i := range X {
 			l, _ := NewLabel(a, padding+spacing*float64(i), a.Size[0]*(0.4), 0.5, X[i])
 			l.YAlign = TopAlign
+			NewTick(a, padding+spacing*float64(i), a.Size[0]*(0.4), 0.2, 2)
 		}
 	case LeftAxis:
 		for i := range X {
 			l, _ := NewLabel(a, a.Size[1]*(0.4), padding+spacing*float64(i), 0.1, X[i])
 			l.XAlign = RightAlign
+			NewTick(a, a.Size[1]*(0.4), padding+spacing*float64(i), 0.2, 2)
 		}
 	case TopAxis:
 		for i := range X {
@@ -114,10 +114,45 @@ func (a *Axis) Labels(X []string, padding float64) {
 	}
 }
 
-func (a *Axis) bounds() image.Rectangle {
+// Tick represents a tick to be drawn on an Axis
+type Tick struct {
+	Primitive
+	W      int
+	Parent *Axis
+}
+
+// NewTick creates a new Tick linked to an Axis.
+func NewTick(parent *Axis, x, y, l float64, w int) (*Tick, error) {
+	var t Tick
+
+	t.Parent = parent
+	t.Origin = [2]float64{x, y}
+	switch parent.Type {
+	case BottomAxis:
+		t.Size = [2]float64{0, l}
+	case LeftAxis:
+		t.Size = [2]float64{l, 0}
+	}
+	t.W = w
+	Tc := mat.DenseCopyOf(I)
+	t.T = append(t.T, parent.T...)
+	t.T = append(t.T, Tc)
+	t.FillColor = colornames.Black
+
+	parent.Children = append(parent.Children, &t)
+	return &t, nil
+}
+
+// Render makes sure Tick's Bounds gets called.
+func (t *Tick) Render(dst draw.Image) {
+	draw.Draw(dst, t.Bounds(), &image.Uniform{t.Color()}, image.ZP, draw.Over)
+}
+
+// Bounds returns a a specific width in pixels.
+func (t *Tick) Bounds() image.Rectangle {
 	var x0, y0, x1, y1 int
 
-	v := transform(a)
+	v := transform(t)
 
 	x0 = int(v.At(0, 0))
 	y0 = int(v.At(1, 0))
@@ -125,14 +160,13 @@ func (a *Axis) bounds() image.Rectangle {
 	y1 = int(v.At(1, 1))
 
 	if x0 == x1 {
-		x0 -= a.W
-		y0 += a.W * 2
+		x0 -= t.W / 2
+		x1 += t.W / 2
 	}
 	if y0 == y1 {
-		y1 += a.W
-		x0 -= a.W * 2
+		y0 -= t.W / 2
+		y1 += t.W / 2
 	}
 
-	//return image.Rect(min(x0, x1), min(y0, y1), max(x0, x1), max(y0, y1))
-	return a.Primitive.Bounds()
+	return image.Rect(min(x0, x1), min(y0, y1), max(x0, x1), max(y0, y1))
 }

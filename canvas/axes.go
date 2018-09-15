@@ -91,9 +91,6 @@ func (ax *Axes) BarPlot(X []string, Y []float64) error {
 	barW := (2.0 - 4.0*padding) / (3*n - 1)
 	spaceW := barW / 2.0
 
-	axX, _ := NewAxis(ax, BottomAxis)
-	axY, _ := NewAxis(ax, LeftAxis)
-
 	for i := range Y {
 		bar, err := NewBar(ax,
 			padding+barW/2.0+float64(i)*(barW+spaceW),
@@ -104,21 +101,28 @@ func (ax *Axes) BarPlot(X []string, Y []float64) error {
 			return err
 		}
 		bar.XAlign = CenterAlign
-
-		// if X != nil {
-		// 	_, err := NewLabel(axX, bar.Origin[0], 0, 0.5, X[i])
-		// 	if err != nil {
-		// 		log.Fatal(err)
-		// 	}
-		// }
 	}
+
+	axX, _ := NewAxis(ax, BottomAxis)
 
 	if X != nil {
 		axX.Labels(X, padding+spaceW)
 	}
 
-	axX.Bounds()
-	axY.Bounds()
+	labelsY := []string{}
+	if Y != nil {
+		min := minSlice(Y)
+		step := (maxY - min) / float64(5)
+		for i := 0; i < 5; i++ {
+			labelsY = append(labelsY, fmt.Sprintf("%.2f", min+step*float64(i)))
+		}
+	}
+
+	axY, err := NewAxis(ax, LeftAxis)
+	if err != nil {
+		return err
+	}
+	axY.Labels(labelsY, 0)
 
 	return nil
 }
