@@ -71,19 +71,19 @@ type Primitive struct {
 func (p *Primitive) Vector() mat.Matrix {
 	var v []float64
 	switch p.XAlign {
-	case 1: // Center align
+	case CenterAlign:
 		v = append(v, p.Origin[0]-p.Size[0]/2, p.Origin[0]+p.Size[0]/2)
-	case 2: // Right align
+	case RightAlign:
 		v = append(v, p.Origin[0]-p.Size[0], p.Origin[0])
-	default: // Left align
+	case LeftAlign:
 		v = append(v, p.Origin[0], p.Origin[0]+p.Size[0])
 	}
 	switch p.YAlign {
-	case 1: // Center align
+	case CenterAlign:
 		v = append(v, p.Origin[1]-p.Size[1]/2, p.Origin[1]+p.Size[1]/2)
-	case 2: // Top align
+	case TopAlign:
 		v = append(v, p.Origin[1]-p.Size[1], p.Origin[1])
-	default: // Bottom align
+	case BottomAlign:
 		v = append(v, p.Origin[1], p.Origin[1]+p.Size[1])
 	}
 	v = append(v, 1, 1)
