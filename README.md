@@ -4,13 +4,13 @@ The current state of this package in not ready for usage. You may use it at your
 
 ## Testing the code
 To test the code, run:
-`go run main/main.go`
+`go run example/png/main.go`
 
 or build:
-`go build main/main.go`
+`go build example/png/main.go`
 
-Then, open your favorite browser and go to:
-`localhost:8000`
+This will generate a `out.png` file.
+Then, the default image viewer will open `out.png`.
 
 ## Usage
 Import this packages as:
