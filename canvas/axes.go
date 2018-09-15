@@ -11,11 +11,13 @@ import (
 	"gonum.org/v1/gonum/mat"
 )
 
+// Axes represents a Primitive with Figure as its parent.
 type Axes struct {
 	Primitive
 	Parent *Figure
 }
 
+// NewAxes creates a new Axes linked to a parent Figure.
 func NewAxes(parent *Figure, dims ...float64) (*Axes, error) {
 	var o, s [2]float64
 
@@ -49,7 +51,7 @@ func maxSlice(s []float64) float64 {
 	if len(s) <= 0 {
 		log.Panic("max(s) on an empty slice")
 	}
-	var m float64 = s[0]
+	var m = s[0]
 	for _, v := range s {
 		if v > m {
 			m = v
@@ -59,6 +61,7 @@ func maxSlice(s []float64) float64 {
 	return m
 }
 
+// BarPlot creates a Bar chart inside Axes with X labels and Y values.
 func (ax *Axes) BarPlot(X []string, Y []float64) error {
 	if X != nil {
 		if len(X) != len(Y) {
@@ -71,7 +74,7 @@ func (ax *Axes) BarPlot(X []string, Y []float64) error {
 	maxY := maxSlice(Y) / 0.9
 
 	n := float64(len(Y))
-	var padding float64 = 0.1
+	var padding = 0.1
 	barW := (2.0 - 4.0*padding) / (3*n - 1)
 	spaceW := barW / 2.0
 
@@ -107,6 +110,7 @@ func vmap(value, fmin, fmax, tmin, tmax float64) float64 {
 	return (value-fmin)/(fmax-fmin)*(tmax-tmin) + tmin
 }
 
+// ScatterPlot creates a Scatter chart inside Axes with X and Y values.
 func (ax *Axes) ScatterPlot(X, Y []float64) error {
 	if X != nil {
 		if len(X) != len(Y) {
@@ -119,7 +123,7 @@ func (ax *Axes) ScatterPlot(X, Y []float64) error {
 	maxY := maxSlice(Y) / 0.9
 	maxX := maxSlice(X)
 
-	var padding float64 = 0.1
+	var padding = 0.1
 
 	for i := range Y {
 		_, err := NewScatterPoint(ax, vmap(X[i], 0, maxX, padding, 1-padding), Y[i]/maxY)
@@ -173,11 +177,13 @@ func border(dst draw.Image, r image.Rectangle, w int, src image.Image,
 		src, sp.Add(image.Pt(-w, 0)), op)
 }
 
+// Render draws the Axes' border on top of drawing its contents.
 func (ax *Axes) Render(dst draw.Image) {
 	ax.Primitive.Render(dst)
 	border(dst, ax.Bounds(), -2, &image.Uniform{colornames.Black}, image.ZP, draw.Src)
 }
 
+// Axis represents a Primitive for horizontal and vertical axes with Axes as its parent.
 type Axis struct {
 	Primitive
 	W        int
@@ -185,6 +191,9 @@ type Axis struct {
 	Parent   *Axes
 }
 
+// NewAxis creates a new Axis linked to an Axes.
+// which = 0 defines the Axis as horizontal.
+// which = 1 defines the Axis as vertical.
 func NewAxis(parent *Axes, which byte) (*Axis, error) {
 	var ax Axis
 
@@ -210,7 +219,7 @@ func NewAxis(parent *Axes, which byte) (*Axis, error) {
 	return &ax, nil
 }
 
-func (a *Axis) Bounds() image.Rectangle {
+func (a *Axis) bounds() image.Rectangle {
 	var x0, y0, x1, y1 int
 
 	v := transform(a)
