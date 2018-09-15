@@ -109,12 +109,12 @@ func (ax *Axes) BarPlot(X []string, Y []float64) error {
 		axX.Labels(X, padding+spaceW)
 	}
 
+	maxY = maxSlice(Y)
 	labelsY := []string{}
 	if Y != nil {
-		min := minSlice(Y)
-		step := (maxY - min) / float64(5)
+		step := (maxY) / float64(4)
 		for i := 0; i < 5; i++ {
-			labelsY = append(labelsY, fmt.Sprintf("%.2f", min+step*float64(i)))
+			labelsY = append(labelsY, fmt.Sprintf("%.2f", step*float64(i)))
 		}
 	}
 
@@ -122,7 +122,7 @@ func (ax *Axes) BarPlot(X []string, Y []float64) error {
 	if err != nil {
 		return err
 	}
-	axY.Labels(labelsY, 0)
+	axY.Labels(labelsY, 0.1)
 
 	return nil
 }
@@ -175,9 +175,10 @@ func (ax *Axes) ScatterPlot(X, Y []float64) error {
 	}
 	axX2.Labels(labels, padding)
 
+	maxY = maxSlice(Y)
 	if Y != nil {
 		min := minSlice(Y)
-		step := (maxY - min) / float64(5)
+		step := (maxY - min) / float64(4)
 		for i := 0; i < 5; i++ {
 			labelsY = append(labelsY, fmt.Sprintf("%.2f", min+step*float64(i)))
 		}
@@ -187,7 +188,7 @@ func (ax *Axes) ScatterPlot(X, Y []float64) error {
 	if err != nil {
 		return err
 	}
-	axY.Labels(labelsY, 0)
+	axY.Labels(labelsY, 0.1)
 
 	axY2, err := NewAxis(ax, RightAxis)
 	if err != nil {

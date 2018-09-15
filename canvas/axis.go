@@ -96,10 +96,11 @@ func (a *Axis) Labels(X []string, padding float64) {
 			NewTick(a, padding+spacing*float64(i), a.Size[0]*(0.4), 0.2, 2)
 		}
 	case LeftAxis:
+		spacing = (1 - padding) / (float64(len(X)) - 1)
 		for i := range X {
-			l, _ := NewLabel(a, a.Size[1]*(0.4), padding+spacing*float64(i), 0.1, X[i])
+			l, _ := NewLabel(a, a.Size[1]*(0.4), spacing*float64(i), 0.1, X[i])
 			l.XAlign = RightAlign
-			NewTick(a, a.Size[1]*(0.4), padding+spacing*float64(i), 0.2, 2)
+			NewTick(a, a.Size[1]*(0.4), spacing*float64(i), 0.2, 2)
 		}
 	case TopAxis:
 		for i := range X {
