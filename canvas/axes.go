@@ -3,6 +3,7 @@ package canvas
 import (
 	"fmt"
 	"image"
+	"image/color"
 	"image/draw"
 	"log"
 
@@ -74,7 +75,7 @@ func (ax *Axes) BarPlot(X []string, Y []float64) error {
 	barW := (2.0 - 4.0*padding) / (3*n - 1)
 	spaceW := barW / 2.0
 
-	for i, _ := range Y {
+	for i := range Y {
 		bar, err := NewBar(ax,
 			padding+barW/2.0+float64(i)*(barW+spaceW),
 			0,
@@ -92,6 +93,12 @@ func (ax *Axes) BarPlot(X []string, Y []float64) error {
 			}
 		}
 	}
+
+	axX, _ := NewAxis(ax, 0)
+	axY, _ := NewAxis(ax, 1)
+
+	axX.Bounds()
+	axY.Bounds()
 
 	return nil
 }
@@ -114,7 +121,7 @@ func (ax *Axes) ScatterPlot(X, Y []float64) error {
 
 	var padding float64 = 0.1
 
-	for i, _ := range Y {
+	for i := range Y {
 		point, err := NewScatterPoint(ax, vmap(X[i], 0, maxX, padding, 1-padding), Y[i]/maxY)
 		if err != nil {
 			return err
@@ -173,8 +180,9 @@ func (ax *Axes) Render(dst draw.Image) {
 
 type Axis struct {
 	Primitive
-	W      int
-	Parent *Axes
+	W        int
+	Min, Max float64
+	Parent   *Axes
 }
 
 func NewAxis(parent *Axes, which byte) (*Axis, error) {
@@ -183,21 +191,22 @@ func NewAxis(parent *Axes, which byte) (*Axis, error) {
 	ax.Origin = [2]float64{0, 0}
 	switch which {
 	case 0:
-		ax.Size = [2]float64{0, 1}
+		ax.Size = [2]float64{0.2, 1}
 		ax.XAlign = RightAlign
 	case 1:
-		ax.Size = [2]float64{1, 0}
+		ax.Size = [2]float64{1, 0.2}
 		ax.YAlign = TopAlign
 	}
 
-	ax.W = 8
+	ax.W = 2
 
 	ax.Parent = parent
 	Tc := I
 	ax.T = append(ax.T, parent.T...)
 	ax.T = append(ax.T, Tc)
-	ax.FillColor = colornames.Black
+	ax.FillColor = color.Transparent
 
+	parent.Children = append(parent.Children, &ax)
 	return &ax, nil
 }
 
@@ -220,6 +229,6 @@ func (a *Axis) Bounds() image.Rectangle {
 		x0 -= a.W * 2
 	}
 
-	return image.Rect(min(x0, x1), min(y0, y1), max(x0, x1), max(y0, y1))
-
+	//return image.Rect(min(x0, x1), min(y0, y1), max(x0, x1), max(y0, y1))
+	return a.Primitive.Bounds()
 }

@@ -2,10 +2,11 @@ package canvas
 
 import (
 	"fmt"
-	"gonum.org/v1/gonum/mat"
 	"image"
 	"image/color"
 	"image/draw"
+
+	"gonum.org/v1/gonum/mat"
 )
 
 const LeftAlign byte = 0
@@ -62,7 +63,7 @@ func transform(r Renderer) *mat.Dense {
 type Primitive struct {
 	Origin, Size           [2]float64
 	T                      []*mat.Dense
-	FillColor, StrokeColor color.RGBA
+	FillColor, StrokeColor color.Color
 	XAlign, YAlign         byte
 	Children               []Container
 }
@@ -96,7 +97,7 @@ func (p *Primitive) Transform() []*mat.Dense {
 }
 
 func (p *Primitive) Render(dst draw.Image) {
-	draw.Draw(dst, p.Bounds(), &image.Uniform{p.Color()}, image.ZP, draw.Src)
+	draw.Draw(dst, p.Bounds(), &image.Uniform{p.Color()}, image.ZP, draw.Over)
 }
 
 func min(a, b int) int {
@@ -128,7 +129,7 @@ func (p *Primitive) Bounds() image.Rectangle {
 	return image.Rect(min(x0, x1), min(y0, y1), max(x0, x1), max(y0, y1))
 }
 
-func (p *Primitive) Color() color.RGBA {
+func (p *Primitive) Color() color.Color {
 	return p.FillColor
 }
 
@@ -143,7 +144,7 @@ func (p *Primitive) GetChildren() []Container {
 
 type Container interface {
 	Bounds() image.Rectangle
-	Color() color.RGBA
+	Color() color.Color
 	Render(draw.Image)
 	GetChildren() []Container
 }
