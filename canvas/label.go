@@ -15,7 +15,7 @@ import (
 
 type Label struct {
 	Primitive
-	Parent *Axes
+	Parent *Axis
 	Text   string
 }
 
@@ -27,7 +27,7 @@ func (l *Label) Render(dst draw.Image) {
 	t.Render(dst, location.X, location.Y, l.Text)
 }
 
-func NewLabel(parent *Axes, x, y, h float64, text string) (*Label, error) {
+func NewLabel(parent *Axis, x, y, h float64, text string) (*Label, error) {
 	var l Label
 	l.Parent = parent
 	l.Origin = [2]float64{x, y}

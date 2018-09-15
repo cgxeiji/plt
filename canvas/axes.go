@@ -75,6 +75,9 @@ func (ax *Axes) BarPlot(X []string, Y []float64) error {
 	barW := (2.0 - 4.0*padding) / (3*n - 1)
 	spaceW := barW / 2.0
 
+	axX, _ := NewAxis(ax, 0)
+	axY, _ := NewAxis(ax, 1)
+
 	for i := range Y {
 		bar, err := NewBar(ax,
 			padding+barW/2.0+float64(i)*(barW+spaceW),
@@ -87,15 +90,12 @@ func (ax *Axes) BarPlot(X []string, Y []float64) error {
 		bar.XAlign = CenterAlign
 
 		if X != nil {
-			_, err := NewLabel(ax, bar.Origin[0], -0.1, 0.08, X[i])
+			_, err := NewLabel(axX, bar.Origin[0], -0.1, 0.08, X[i])
 			if err != nil {
 				log.Fatal(err)
 			}
 		}
 	}
-
-	axX, _ := NewAxis(ax, 0)
-	axY, _ := NewAxis(ax, 1)
 
 	axX.Bounds()
 	axY.Bounds()
@@ -122,18 +122,18 @@ func (ax *Axes) ScatterPlot(X, Y []float64) error {
 	var padding float64 = 0.1
 
 	for i := range Y {
-		point, err := NewScatterPoint(ax, vmap(X[i], 0, maxX, padding, 1-padding), Y[i]/maxY)
+		_, err := NewScatterPoint(ax, vmap(X[i], 0, maxX, padding, 1-padding), Y[i]/maxY)
 		if err != nil {
 			return err
 		}
 
-		if X != nil {
-			_, err := NewLabel(ax, point.Origin[0], -0.1, 0.08, fmt.Sprint(X[i]))
-			if err != nil {
-				log.Fatal(err)
-			}
+		// if X != nil {
+		// 	_, err := NewLabel(ax, point.Origin[0], -0.1, 0.08, fmt.Sprint(X[i]))
+		// 	if err != nil {
+		// 		log.Fatal(err)
+		// 	}
 
-		}
+		// }
 	}
 
 	return nil
