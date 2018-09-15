@@ -263,6 +263,8 @@ func NewAxis(parent *Axes, which byte) (*Axis, error) {
 }
 
 // Render creates a Typer to be used by the children Labels.
+// The size of Typer is calculated whenever Axis is requested to render.
+// This ensures the size is updated on any parent's change.
 func (a *Axis) Render(dst draw.Image) {
 	if len(a.Children) == 0 {
 		return
