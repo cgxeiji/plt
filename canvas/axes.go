@@ -91,8 +91,8 @@ func (ax *Axes) BarPlot(X []string, Y []float64) error {
 	barW := (2.0 - 4.0*padding) / (3*n - 1)
 	spaceW := barW / 2.0
 
-	axX, _ := NewAxis(ax, 0)
-	axY, _ := NewAxis(ax, 1)
+	axX, _ := NewAxis(ax, BottomAxis)
+	axY, _ := NewAxis(ax, LeftAxis)
 
 	for i := range Y {
 		bar, err := NewBar(ax,
@@ -151,7 +151,6 @@ func (ax *Axes) ScatterPlot(X, Y []float64) error {
 		}
 	}
 
-	axX, _ := NewAxis(ax, 0)
 	if X != nil {
 		min := minSlice(X)
 		step := (maxX - min) / float64(len(X))
@@ -160,9 +159,16 @@ func (ax *Axes) ScatterPlot(X, Y []float64) error {
 		}
 	}
 
+	axX, err := NewAxis(ax, BottomAxis)
+	if err != nil {
+		return err
+	}
 	axX.Labels(labels, padding)
 
-	axY, _ := NewAxis(ax, 1)
+	axY, err := NewAxis(ax, LeftAxis)
+	if err != nil {
+		return err
+	}
 	if Y != nil {
 		min := minSlice(Y)
 		step := (maxY - min) / float64(5)

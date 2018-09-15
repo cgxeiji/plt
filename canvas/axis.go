@@ -8,6 +8,18 @@ import (
 	"gonum.org/v1/gonum/mat"
 )
 
+// BottomAxis defines an Axis as the bottom Axis of an Axes
+const BottomAxis = 0
+
+// LeftAxis defines an Axis as the left Axis of an Axes
+const LeftAxis = 1
+
+// TopAxis defines an Axis as the top Axis of an Axes
+const TopAxis = 2
+
+// RightAxis defines an Axis as the right Axis of an Axes
+const RightAxis = 3
+
 // Axis represents a Primitive for horizontal and vertical axes with Axes as its parent.
 type Axis struct {
 	Primitive
