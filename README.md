@@ -78,3 +78,6 @@ plot := plt.Render(fig)
 // Export with your favourite encoder
 png.Encode(w, plot)
 ```
+
+## Example Chart
+[Example](out.png "Example Chart")
