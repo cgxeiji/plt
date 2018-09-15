@@ -31,25 +31,30 @@ type Axis struct {
 }
 
 // NewAxis creates a new Axis linked to an Axes.
-// which = 0 defines the Axis as horizontal.
-// which = 1 defines the Axis as vertical.
-func NewAxis(parent *Axes, which byte) (*Axis, error) {
+// The parameter location can be set to BottomAxis, LeftAxis, TopAxis or RightAxis.
+func NewAxis(parent *Axes, location byte) (*Axis, error) {
 	var ax Axis
 	var o, s [2]float64
 
-	switch which {
-	case 0:
+	switch location {
+	case BottomAxis:
 		o = [2]float64{0, -0.1}
 		s = [2]float64{1, 0.2}
-	case 1:
-		o = [2]float64{-0.05, 0}
-		s = [2]float64{0.1, 1}
+	case LeftAxis:
+		o = [2]float64{-0.1, 0}
+		s = [2]float64{0.2, 1}
+	case TopAxis:
+		o = [2]float64{0, 0.9}
+		s = [2]float64{1, 0.2}
+	case RightAxis:
+		o = [2]float64{0.9, 0}
+		s = [2]float64{0.2, 1}
 	}
 
 	ax.W = 2
 
 	ax.Parent = parent
-	ax.Type = which
+	ax.Type = location
 	ax.Origin = o
 	ax.Size = s
 	Tc := mat.NewDense(3, 3, []float64{
@@ -86,15 +91,25 @@ func (a *Axis) Labels(X []string, padding float64) {
 	var spacing = (1 - padding*2) / (float64(len(X)) - 1)
 
 	switch a.Type {
-	case 0:
+	case BottomAxis:
 		for i := range X {
 			l, _ := NewLabel(a, padding+spacing*float64(i), a.Size[0]*(0.4), 0.5, X[i])
 			l.YAlign = TopAlign
 		}
-	case 1:
+	case LeftAxis:
 		for i := range X {
 			l, _ := NewLabel(a, a.Size[1]*(0.4), padding+spacing*float64(i), 0.1, X[i])
 			l.XAlign = RightAlign
+		}
+	case TopAxis:
+		for i := range X {
+			l, _ := NewLabel(a, padding+spacing*float64(i), a.Size[0]*(0.6), 0.5, X[i])
+			l.YAlign = BottomAlign
+		}
+	case RightAxis:
+		for i := range X {
+			l, _ := NewLabel(a, a.Size[1]*(0.6), padding+spacing*float64(i), 0.1, X[i])
+			l.XAlign = LeftAlign
 		}
 	}
 }

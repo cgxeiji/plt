@@ -165,10 +165,12 @@ func (ax *Axes) ScatterPlot(X, Y []float64) error {
 	}
 	axX.Labels(labels, padding)
 
-	axY, err := NewAxis(ax, LeftAxis)
+	axX2, err := NewAxis(ax, TopAxis)
 	if err != nil {
 		return err
 	}
+	axX2.Labels(labels, padding)
+
 	if Y != nil {
 		min := minSlice(Y)
 		step := (maxY - min) / float64(5)
@@ -177,7 +179,17 @@ func (ax *Axes) ScatterPlot(X, Y []float64) error {
 		}
 	}
 
+	axY, err := NewAxis(ax, LeftAxis)
+	if err != nil {
+		return err
+	}
 	axY.Labels(labelsY, 0)
+
+	axY2, err := NewAxis(ax, RightAxis)
+	if err != nil {
+		return err
+	}
+	axY2.Labels(labelsY, 0)
 
 	return nil
 }

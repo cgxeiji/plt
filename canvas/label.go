@@ -52,8 +52,9 @@ type Typer struct {
 func (t *Typer) Render(dst draw.Image, X, Y int, text string) {
 	d := t.Drawer
 	d.Dst = dst
-	var dX, dY fixed.Int26_6
+	var dX fixed.Int26_6
 
+	// dX needs to be calculated on render because the length of text changes
 	switch t.XAlign {
 	case CenterAlign:
 		dX = fixed.I(X) - d.MeasureString(text)/2
@@ -62,14 +63,8 @@ func (t *Typer) Render(dst draw.Image, X, Y int, text string) {
 	case LeftAlign:
 		dX = fixed.I(X)
 	}
-	switch t.YAlign {
-	case CenterAlign:
-		dY = fixed.I(Y) + t.Height/2
-	case TopAlign:
-		dY = fixed.I(Y) + t.Height
-	case BottomAlign:
-		dY = fixed.I(Y)
-	}
+	// dY only needs to account for t.Height because Y is calculated by Primitive.Vector()
+	dY := fixed.I(Y) + t.Height
 
 	d.Dot = fixed.Point26_6{
 		X: dX,
