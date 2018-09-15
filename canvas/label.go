@@ -20,13 +20,8 @@ type Label struct {
 }
 
 func (l *Label) Render(dst draw.Image) {
-	bounds := l.Bounds()
-	height := bounds.Max.Y - bounds.Min.Y
-	t, _ := NewTyper(height * 72 / 300) // TODO: Change for a faster typer initialization
-	t.XAlign = l.XAlign
-	t.YAlign = l.YAlign
-	location := bounds.Min
-	t.Render(dst, location.X, location.Y, l.Text)
+	location := l.Bounds().Min
+	l.Parent.Typer.Render(dst, location.X, location.Y, l.Text)
 }
 
 func NewLabel(parent *Axis, x, y, h float64, text string) (*Label, error) {

@@ -224,6 +224,7 @@ type Axis struct {
 	Min, Max float64
 	Type     byte
 	Parent   *Axes
+	Typer    *Typer
 }
 
 // NewAxis creates a new Axis linked to an Axes.
@@ -259,6 +260,20 @@ func NewAxis(parent *Axes, which byte) (*Axis, error) {
 
 	parent.Children = append(parent.Children, &ax)
 	return &ax, nil
+}
+
+// Render creates a Typer to be used by the children Labels.
+func (a *Axis) Render(dst draw.Image) {
+	if len(a.Children) == 0 {
+		return
+	}
+	l := a.Children[0].(*Label)
+	bounds := l.Bounds()
+	height := bounds.Max.Y - bounds.Min.Y
+	t, _ := NewTyper(height * 72 / 300)
+	t.XAlign = l.XAlign
+	t.YAlign = l.YAlign
+	a.Typer = t
 }
 
 // Labels adds X labels to the Axis with regular spacing.
