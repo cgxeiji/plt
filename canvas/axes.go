@@ -92,12 +92,16 @@ func (ax *Axes) BarPlot(X []string, Y []float64) error {
 		}
 		bar.XAlign = CenterAlign
 
-		if X != nil {
-			_, err := NewLabel(axX, bar.Origin[0], -0.1, 0.08, X[i])
-			if err != nil {
-				log.Fatal(err)
-			}
-		}
+		// if X != nil {
+		// 	_, err := NewLabel(axX, bar.Origin[0], 0, 0.5, X[i])
+		// 	if err != nil {
+		// 		log.Fatal(err)
+		// 	}
+		// }
+	}
+
+	if X != nil {
+		axX.Labels(X, padding+spaceW)
 	}
 
 	axX.Bounds()
@@ -188,6 +192,7 @@ type Axis struct {
 	Primitive
 	W        int
 	Min, Max float64
+	Type     byte
 	Parent   *Axes
 }
 
@@ -196,27 +201,50 @@ type Axis struct {
 // which = 1 defines the Axis as vertical.
 func NewAxis(parent *Axes, which byte) (*Axis, error) {
 	var ax Axis
+	var o, s [2]float64
 
-	ax.Origin = [2]float64{0, 0}
 	switch which {
 	case 0:
-		ax.Size = [2]float64{0.2, 1}
-		ax.XAlign = RightAlign
+		o = [2]float64{0, -0.1}
+		s = [2]float64{1, 0.2}
 	case 1:
-		ax.Size = [2]float64{1, 0.2}
-		ax.YAlign = TopAlign
+		o = [2]float64{-0.1, 0}
+		s = [2]float64{0.2, 1}
 	}
 
 	ax.W = 2
 
 	ax.Parent = parent
-	Tc := I
+	ax.Type = which
+	ax.Origin = o
+	ax.Size = s
+	Tc := mat.NewDense(3, 3, []float64{
+		s[0], 0, o[0],
+		0, s[1], o[1],
+		0, 0, 1,
+	})
 	ax.T = append(ax.T, parent.T...)
 	ax.T = append(ax.T, Tc)
 	ax.FillColor = color.Transparent
 
 	parent.Children = append(parent.Children, &ax)
 	return &ax, nil
+}
+
+// Labels adds X labels to the Axis with regular spacing.
+func (a *Axis) Labels(X []string, padding float64) {
+	var spacing = (1 - padding*2) / (float64(len(X)) - 1)
+
+	switch a.Type {
+	case 0:
+		for i := range X {
+			NewLabel(a, padding+spacing*float64(i), 0, 0.5, X[i])
+		}
+	case 1:
+		for i := range X {
+			NewLabel(a, 0, padding+spacing*float64(i), 0.5, X[i])
+		}
+	}
 }
 
 func (a *Axis) bounds() image.Rectangle {
