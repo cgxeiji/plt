@@ -47,6 +47,20 @@ func NewAxes(parent *Figure, dims ...float64) (*Axes, error) {
 	return &ax, nil
 }
 
+func minSlice(s []float64) float64 {
+	if len(s) <= 0 {
+		log.Panic("max(s) on an empty slice")
+	}
+	var m = s[0]
+	for _, v := range s {
+		if v < m {
+			m = v
+		}
+	}
+
+	return m
+}
+
 func maxSlice(s []float64) float64 {
 	if len(s) <= 0 {
 		log.Panic("max(s) on an empty slice")
@@ -126,6 +140,8 @@ func (ax *Axes) ScatterPlot(X, Y []float64) error {
 
 	maxY := maxSlice(Y) / 0.9
 	maxX := maxSlice(X)
+	labels := []string{}
+	labelsY := []string{}
 
 	var padding = 0.1
 
@@ -134,15 +150,29 @@ func (ax *Axes) ScatterPlot(X, Y []float64) error {
 		if err != nil {
 			return err
 		}
-
-		// if X != nil {
-		// 	_, err := NewLabel(ax, point.Origin[0], -0.1, 0.08, fmt.Sprint(X[i]))
-		// 	if err != nil {
-		// 		log.Fatal(err)
-		// 	}
-
-		// }
 	}
+
+	axX, _ := NewAxis(ax, 0)
+	if X != nil {
+		min := minSlice(X)
+		step := (maxX - min) / float64(len(X))
+		for i := range X {
+			labels = append(labels, fmt.Sprintf("%.2f", min+step*float64(i)))
+		}
+	}
+
+	axX.Labels(labels, padding)
+
+	axY, _ := NewAxis(ax, 1)
+	if Y != nil {
+		min := minSlice(Y)
+		step := (maxY - min) / float64(5)
+		for i := 0; i < 5; i++ {
+			labelsY = append(labelsY, fmt.Sprintf("%.2f", min+step*float64(i)))
+		}
+	}
+
+	axY.Labels(labelsY, 0)
 
 	return nil
 }
@@ -208,8 +238,8 @@ func NewAxis(parent *Axes, which byte) (*Axis, error) {
 		o = [2]float64{0, -0.1}
 		s = [2]float64{1, 0.2}
 	case 1:
-		o = [2]float64{-0.1, 0}
-		s = [2]float64{0.2, 1}
+		o = [2]float64{-0.05, 0}
+		s = [2]float64{0.1, 1}
 	}
 
 	ax.W = 2
@@ -238,11 +268,13 @@ func (a *Axis) Labels(X []string, padding float64) {
 	switch a.Type {
 	case 0:
 		for i := range X {
-			NewLabel(a, padding+spacing*float64(i), 0, 0.5, X[i])
+			l, _ := NewLabel(a, padding+spacing*float64(i), a.Size[0]*(0.4), 0.5, X[i])
+			l.YAlign = TopAlign
 		}
 	case 1:
 		for i := range X {
-			NewLabel(a, 0, padding+spacing*float64(i), 0.5, X[i])
+			l, _ := NewLabel(a, a.Size[1]*(0.4), padding+spacing*float64(i), 0.1, X[i])
+			l.XAlign = RightAlign
 		}
 	}
 }

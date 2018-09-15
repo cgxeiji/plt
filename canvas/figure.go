@@ -26,17 +26,19 @@ func (f *Figure) SubAxes(rows, cols int) ([]*Axes, error) {
 	var axes []*Axes
 
 	n := float64(cols)
-	var padding float64 = 0.05
-	spaceW := padding
-	axW := (1 - 2*padding - (n-1)*spaceW) / n
+	var paddingX float64 = 0.1
+	var paddingY float64 = 0.05
+
+	spaceW := paddingX
+	axW := (1 - 2*paddingX - (n-1)*spaceW) / n
 
 	n = float64(rows)
-	spaceH := padding
-	axH := (1 - 2*padding - (n-1)*spaceH) / n
+	spaceH := paddingY
+	axH := (1 - 2*paddingY - (n-1)*spaceH) / n
 
 	for j := rows - 1; j >= 0; j-- {
 		for i := 0; i < cols; i++ {
-			ax, err := NewAxes(f, padding+float64(i)*(axW+spaceW), padding+float64(j)*(axH+spaceH), axW, axH)
+			ax, err := NewAxes(f, paddingX+float64(i)*(axW+spaceW), paddingY+float64(j)*(axH+spaceH), axW, axH)
 			if err != nil {
 				return nil, err
 			}

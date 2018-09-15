@@ -23,6 +23,8 @@ func (l *Label) Render(dst draw.Image) {
 	bounds := l.Bounds()
 	height := bounds.Max.Y - bounds.Min.Y
 	t, _ := NewTyper(height * 72 / 300) // TODO: Change for a faster typer initialization
+	t.XAlign = l.XAlign
+	t.YAlign = l.YAlign
 	location := bounds.Min
 	t.Render(dst, location.X, location.Y, l.Text)
 }
@@ -47,16 +49,36 @@ func NewLabel(parent *Axis, x, y, h float64, text string) (*Label, error) {
 var DefaultTyper = NewDefaultTyper()
 
 type Typer struct {
-	Drawer *font.Drawer
-	Height fixed.Int26_6
+	Drawer         *font.Drawer
+	Height         fixed.Int26_6
+	XAlign, YAlign byte
 }
 
 func (t *Typer) Render(dst draw.Image, X, Y int, text string) {
 	d := t.Drawer
 	d.Dst = dst
+	var dX, dY fixed.Int26_6
+
+	switch t.XAlign {
+	case CenterAlign:
+		dX = fixed.I(X) - d.MeasureString(text)/2
+	case RightAlign:
+		dX = fixed.I(X) - d.MeasureString(text)
+	case LeftAlign:
+		dX = fixed.I(X)
+	}
+	switch t.YAlign {
+	case CenterAlign:
+		dY = fixed.I(Y) + t.Height/2
+	case TopAlign:
+		dY = fixed.I(Y) + t.Height
+	case BottomAlign:
+		dY = fixed.I(Y)
+	}
+
 	d.Dot = fixed.Point26_6{
-		X: fixed.I(X) - d.MeasureString(text)/2,
-		Y: fixed.I(Y) + t.Height/2,
+		X: dX,
+		Y: dY,
 	}
 	d.DrawString(text)
 }

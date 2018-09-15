@@ -81,9 +81,9 @@ func (p *Primitive) Vector() mat.Matrix {
 	switch p.YAlign {
 	case 1: // Center align
 		v = append(v, p.Origin[1]-p.Size[1]/2, p.Origin[1]+p.Size[1]/2)
-	case 2: // Right align
+	case 2: // Top align
 		v = append(v, p.Origin[1]-p.Size[1], p.Origin[1])
-	default: // Left align
+	default: // Bottom align
 		v = append(v, p.Origin[1], p.Origin[1]+p.Size[1])
 	}
 	v = append(v, 1, 1)
