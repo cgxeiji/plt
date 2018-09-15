@@ -80,4 +80,4 @@ png.Encode(w, plot)
 ```
 
 ## Example Chart
-[Example](out.png "Example Chart")
+![Example](out.png "Example Chart")
