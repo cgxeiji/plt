@@ -3,18 +3,9 @@ package plt
 
 import (
 	"image"
-	"image/color"
 	"image/draw"
 
 	"github.com/cgxeiji/plt/canvas"
-)
-
-var (
-	white color.Color = color.RGBA{255, 255, 255, 255}
-	black color.Color = color.RGBA{0, 0, 0, 255}
-	blue  color.Color = color.RGBA{0, 0, 255, 255}
-
-	test int
 )
 
 // Bar creates a draw.Image struct given X and Y slices
