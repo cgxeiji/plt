@@ -180,8 +180,6 @@ func (p *Primitive) GetChildren() []Container {
 
 // Container is an interface that allows access to Render and a Primitive's Children.
 type Container interface {
-	Bounds() image.Rectangle
-	Color() color.Color
 	Render(draw.Image)
 	GetChildren() []Container
 }
