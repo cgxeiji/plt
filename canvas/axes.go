@@ -41,7 +41,7 @@ func NewAxes(parent *Figure, dims ...float64) (*Axes, error) {
 	ax.T = append(ax.T, Tc)
 	ax.FillColor = colornames.White
 
-	parent.Children = append(parent.Children, &ax)
+	parent.children = append(parent.children, &ax)
 
 	return &ax, nil
 }

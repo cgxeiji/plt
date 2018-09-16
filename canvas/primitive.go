@@ -92,7 +92,7 @@ type Primitive struct {
 	T                      []*mat.Dense
 	FillColor, StrokeColor color.Color
 	XAlign, YAlign         byte
-	Children               []Container
+	children               []Container
 }
 
 // Vector returns a mat.Matrix with two point coordinates that define
@@ -178,7 +178,7 @@ func (p *Primitive) String() string {
 
 // GetChildren returns a slice of Container from the children of a Primitive.
 func (p *Primitive) GetChildren() []Container {
-	return p.Children
+	return p.children
 }
 
 // Container is an interface that allows access to

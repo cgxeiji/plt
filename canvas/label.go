@@ -37,7 +37,7 @@ func NewLabel(parent *Axis, x, y, h float64, text string) (*Label, error) {
 	l.FillColor = colornames.Black
 	l.Text = text
 
-	parent.Children = append(parent.Children, &l)
+	parent.children = append(parent.children, &l)
 	return &l, nil
 }
 

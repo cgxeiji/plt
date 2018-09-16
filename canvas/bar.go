@@ -59,6 +59,6 @@ func NewBar(parent *Axes, dims ...float64) (*Bar, error) {
 	bar.T = append(bar.T, Tc)
 	bar.FillColor = colornames.Red
 
-	parent.Children = append(parent.Children, &bar)
+	parent.children = append(parent.children, &bar)
 	return &bar, nil
 }

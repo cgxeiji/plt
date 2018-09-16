@@ -64,7 +64,7 @@ func NewAxis(parent *Axes, location byte) (*Axis, error) {
 	ax.T = append(ax.T, Tc)
 	ax.FillColor = color.Transparent
 
-	parent.Children = append(parent.Children, &ax)
+	parent.children = append(parent.children, &ax)
 	return &ax, nil
 }
 
@@ -72,10 +72,10 @@ func NewAxis(parent *Axes, location byte) (*Axis, error) {
 // The size of Typer is calculated whenever Axis is requested to render.
 // This ensures the size is updated on any parent's change.
 func (a *Axis) Render(dst draw.Image) {
-	if len(a.Children) == 0 {
+	if len(a.children) == 0 {
 		return
 	}
-	l := a.Children[0].(*Label)
+	l := a.children[0].(*Label)
 	bounds := l.Bounds()
 	height := bounds.Max.Y - bounds.Min.Y
 	t, _ := NewTyper(height * 72 / 300)
@@ -140,7 +140,7 @@ func NewTick(parent *Axis, x, y, l float64, w int) (*Tick, error) {
 	t.T = append(t.T, Tc)
 	t.FillColor = colornames.Black
 
-	parent.Children = append(parent.Children, &t)
+	parent.children = append(parent.children, &t)
 	return &t, nil
 }
 

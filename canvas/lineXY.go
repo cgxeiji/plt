@@ -22,6 +22,6 @@ func NewScatterPoint(parent *Axes, x, y float64) (*ScatterPoint, error) {
 
 	point.FillColor = colornames.Green
 
-	parent.Children = append(parent.Children, &point)
+	parent.children = append(parent.children, &point)
 	return &point, nil
 }
