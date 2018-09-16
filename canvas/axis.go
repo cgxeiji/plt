@@ -135,7 +135,7 @@ func NewTick(parent *Axis, x, y, l float64, w int) (*Tick, error) {
 		t.Size = [2]float64{l, 0}
 	}
 	t.W = w
-	Tc := mat.DenseCopyOf(I)
+	Tc := mat.DenseCopyOf(iM)
 	t.T = append(t.T, parent.T...)
 	t.T = append(t.T, Tc)
 	t.FillColor = colornames.Black

@@ -31,7 +31,7 @@ func NewLabel(parent *Axis, x, y, h float64, text string) (*Label, error) {
 	l.Size = [2]float64{0, h}
 	l.XAlign = CenterAlign
 	l.YAlign = CenterAlign
-	Tc := mat.DenseCopyOf(I)
+	Tc := mat.DenseCopyOf(iM)
 	l.T = append(l.T, parent.T...)
 	l.T = append(l.T, Tc)
 	l.FillColor = colornames.Black

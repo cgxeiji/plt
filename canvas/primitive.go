@@ -34,9 +34,9 @@ const RightAlign byte = 2
 // Used for Y alignment.
 const TopAlign byte = 2
 
-// Transformer is an interface that makes sure the Primitive returns
+// transformer is an interface that makes sure the Primitive returns
 // a vector transformed into pixels and its transformation matrix.
-type Transformer interface {
+type transformer interface {
 	Vector() mat.Matrix
 	Transform() []*mat.Dense
 }
@@ -52,18 +52,18 @@ func ms(X mat.Matrix) fmt.Formatter {
 	return mat.Formatted(X, mat.Prefix(" "), mat.Squeeze())
 }
 
-// I defines an identity matrix.
-var I = mat.NewDense(3, 3, []float64{
+// iM defines an identity matrix.
+var iM = mat.NewDense(3, 3, []float64{
 	1, 0, 0,
 	0, 1, 0,
 	0, 0, 1})
 
-func transform(t Transformer) *mat.Dense {
+func transform(t transformer) *mat.Dense {
 	v := t.Vector()
 	r, c := v.Dims()
 	render := mat.NewDense(r, c, nil)
 
-	trans := mat.DenseCopyOf(I)
+	trans := mat.DenseCopyOf(iM)
 	transforms := t.Transform()
 	l := len(transforms) - 1
 	for i, m := range transforms {
@@ -86,7 +86,7 @@ func transform(t Transformer) *mat.Dense {
 //
 // Primitive implements Container.
 // Any Primitive can contain other primitives
-// as a slice of Container in Children.
+// as a slice of Container in children.
 type Primitive struct {
 	Origin, Size           [2]float64
 	T                      []*mat.Dense
@@ -176,14 +176,14 @@ func (p *Primitive) String() string {
 	)
 }
 
-// GetChildren returns a slice of Container from the children of a Primitive.
-func (p *Primitive) GetChildren() []Container {
+// Children returns a slice of Container from the children of a Primitive.
+func (p *Primitive) Children() []Container {
 	return p.children
 }
 
 // Container is an interface that allows access to
-// Render and a Primitive's Children.
+// Render and a Primitive's children.
 type Container interface {
 	Render(draw.Image)
-	GetChildren() []Container
+	Children() []Container
 }

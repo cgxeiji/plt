@@ -43,7 +43,7 @@ func Render(f *canvas.Figure) draw.Image {
 
 func renderAll(c canvas.Container, dst draw.Image) {
 	c.Render(dst)
-	for _, child := range c.GetChildren() {
+	for _, child := range c.Children() {
 		renderAll(child, dst)
 	}
 }
