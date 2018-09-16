@@ -22,7 +22,7 @@ func (f *Figure) Resize(w, h float64) {
 	f.T[0].Set(1, 2, h)
 }
 
-// NewFigure attaches a new Axes into the Figure.
+// NewAxes attaches a new Axes into the Figure.
 func (f *Figure) NewAxes() *Axes {
 	ax, _ := NewAxes(f, 0.1, 0.1, 0.8, 0.8)
 	return ax
