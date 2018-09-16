@@ -9,11 +9,11 @@ To test the code, run:
 or build:
 `go build example/png/main.go`
 
-This will generate a `out.png` file.
+This will generate an `out.png` file.
 Then, the default image viewer will open `out.png`.
 
 ## Usage
-Import this packages as:
+Import this package as:
 ```go
 import "github.com/cgxeiji/plt"
 ```
