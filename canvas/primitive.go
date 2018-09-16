@@ -170,7 +170,10 @@ func (p *Primitive) Color() color.Color {
 
 func (p *Primitive) String() string {
 	b := p.Bounds()
-	return fmt.Sprintf("Primitive {T: %v, Origin: %v (pixels: %v), Size: %v (pixels: %v)}", p.T, p.Origin, b.Min, p.Size, b.Size())
+	return fmt.Sprintf(
+		"Primitive {T: %v, Origin: %v (pixels: %v), Size: %v (pixels: %v)}",
+		p.T, p.Origin, b.Min, p.Size, b.Size(),
+	)
 }
 
 // GetChildren returns a slice of Container from the children of a Primitive.
@@ -178,7 +181,8 @@ func (p *Primitive) GetChildren() []Container {
 	return p.Children
 }
 
-// Container is an interface that allows access to Render and a Primitive's Children.
+// Container is an interface that allows access to
+// Render and a Primitive's Children.
 type Container interface {
 	Render(draw.Image)
 	GetChildren() []Container
