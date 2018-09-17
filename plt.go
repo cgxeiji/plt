@@ -12,7 +12,7 @@ import (
 // of []string and []float64 respectively.
 // X and Y must have the same length.
 func Bar(X []string, Y []float64) (draw.Image, error) {
-	var w, h int = 1920, 1080
+	var w, h int = 640, 480
 
 	fig, err := canvas.NewFigure(w, h)
 	if err != nil {

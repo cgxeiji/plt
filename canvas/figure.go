@@ -24,8 +24,8 @@ func (f *Figure) Resize(w, h float64) {
 
 // NewAxes attaches a new Axes into the Figure.
 func (f *Figure) NewAxes() *Axes {
-	ax, _ := NewAxes(f, 0.1, 0.1, 0.8, 0.8)
-	return ax
+	axes, _ := f.SubAxes(1, 1)
+	return axes[0]
 }
 
 // SubAxes attaches multiple Axes defined by the number of rows and columns.

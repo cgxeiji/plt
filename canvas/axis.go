@@ -9,30 +9,26 @@ import (
 	"gonum.org/v1/gonum/mat"
 )
 
-// BottomAxis defines an Axis as the bottom Axis of an Axes
-const BottomAxis = 0
-
-// LeftAxis defines an Axis as the left Axis of an Axes
-const LeftAxis = 1
-
-// TopAxis defines an Axis as the top Axis of an Axes
-const TopAxis = 2
-
-// RightAxis defines an Axis as the right Axis of an Axes
-const RightAxis = 3
+// Constants used to define the location of an Axis primitive.
+const (
+	BottomAxis Alignment = 0
+	LeftAxis   Alignment = 1
+	TopAxis    Alignment = 2
+	RightAxis  Alignment = 3
+)
 
 // Axis represents a Primitive for horizontal and vertical axes with Axes as its parent.
 type Axis struct {
 	Primitive
 	Min, Max float64
-	Type     byte
+	Loc      Alignment
 	Parent   *Axes
 	Typer    *Typer
 }
 
 // NewAxis creates a new Axis linked to an Axes.
 // The parameter location can be set to BottomAxis, LeftAxis, TopAxis or RightAxis.
-func NewAxis(parent *Axes, location byte) (*Axis, error) {
+func NewAxis(parent *Axes, location Alignment) (*Axis, error) {
 	var ax Axis
 	var o, s [2]float64
 
@@ -52,7 +48,7 @@ func NewAxis(parent *Axes, location byte) (*Axis, error) {
 	}
 
 	ax.Parent = parent
-	ax.Type = location
+	ax.Loc = location
 	ax.Origin = o
 	ax.Size = s
 	Tc := mat.NewDense(3, 3, []float64{
@@ -88,7 +84,7 @@ func (a *Axis) Render(dst draw.Image) {
 func (a *Axis) Labels(X []string, padding float64) {
 	var spacing = (1 - padding*2) / (float64(len(X)) - 1)
 
-	switch a.Type {
+	switch a.Loc {
 	case BottomAxis:
 		for i := range X {
 			l, _ := NewLabel(a, padding+spacing*float64(i), a.Size[0]*(0.4), 0.5, X[i])
@@ -128,7 +124,7 @@ func NewTick(parent *Axis, x, y, l float64, w int) (*Tick, error) {
 
 	t.Parent = parent
 	t.Origin = [2]float64{x, y}
-	switch parent.Type {
+	switch parent.Loc {
 	case BottomAxis:
 		t.Size = [2]float64{0, l}
 	case LeftAxis:

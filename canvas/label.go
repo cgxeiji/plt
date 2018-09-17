@@ -46,7 +46,7 @@ var DefaultTyper = NewDefaultTyper()
 type Typer struct {
 	Drawer         *font.Drawer
 	Height         fixed.Int26_6
-	XAlign, YAlign byte
+	XAlign, YAlign Alignment
 }
 
 func (t *Typer) Render(dst draw.Image, X, Y int, text string) {

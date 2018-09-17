@@ -9,19 +9,22 @@ import (
 	"gonum.org/v1/gonum/mat"
 )
 
+// Alignment defines how to draw each element of the plot.
+type Alignment byte
+
 // Constants used to align a Container's side to
 // its origin point.
 const (
 	// Used for X alignment
-	LeftAlign byte = 0
+	LeftAlign Alignment = 0
 	// Used for Y alignment
-	BottomAlign byte = 0
+	BottomAlign Alignment = 0
 	// Used for X and Y alignment
-	CenterAlign byte = 1
+	CenterAlign Alignment = 1
 	// Used for X alignment
-	RightAlign byte = 2
+	RightAlign Alignment = 2
 	// Used for Y alignment
-	TopAlign byte = 2
+	TopAlign Alignment = 2
 )
 
 // transformer is an interface that makes sure the Primitive returns
@@ -81,7 +84,7 @@ type Primitive struct {
 	Origin, Size           [2]float64
 	T                      []*mat.Dense
 	FillColor, StrokeColor color.Color
-	XAlign, YAlign         byte
+	XAlign, YAlign         Alignment
 	children               []Container
 }
 
