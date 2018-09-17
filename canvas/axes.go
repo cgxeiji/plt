@@ -16,8 +16,8 @@ type Axes struct {
 	Parent *Figure
 }
 
-// NewAxes creates a new Axes linked to a parent Figure.
-func NewAxes(parent *Figure, dims ...float64) (*Axes, error) {
+// newAxes creates a new Axes linked to a parent Figure.
+func newAxes(parent *Figure, dims ...float64) (*Axes, error) {
 	var o, s [2]float64
 
 	switch l := len(dims); l {
@@ -92,7 +92,7 @@ func (ax *Axes) BarPlot(X []string, Y []float64) error {
 	spaceW := barW / 2.0
 
 	for i := range Y {
-		bar, err := NewBar(ax,
+		bar, err := newBar(ax,
 			padding+barW/2.0+float64(i)*(barW+spaceW),
 			0,
 			barW,

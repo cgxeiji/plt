@@ -44,7 +44,7 @@ func (f *Figure) SubAxes(rows, cols int) ([]*Axes, error) {
 
 	for j := rows - 1; j >= 0; j-- {
 		for i := 0; i < cols; i++ {
-			ax, err := NewAxes(f, padX+float64(i)*(axW+spaceW), padY+float64(j)*(axH+spaceH), axW, axH)
+			ax, err := newAxes(f, padX+float64(i)*(axW+spaceW), padY+float64(j)*(axH+spaceH), axW, axH)
 			if err != nil {
 				return nil, err
 			}

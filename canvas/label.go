@@ -24,7 +24,7 @@ func (l *Label) Render(dst draw.Image) {
 	l.Parent.Typer.Render(dst, location.X, location.Y, l.Text)
 }
 
-func NewLabel(parent *Axis, x, y, h float64, text string) (*Label, error) {
+func newLabel(parent *Axis, x, y, h float64, text string) (*Label, error) {
 	var l Label
 	l.Parent = parent
 	l.Origin = [2]float64{x, y}
@@ -41,21 +41,19 @@ func NewLabel(parent *Axis, x, y, h float64, text string) (*Label, error) {
 	return &l, nil
 }
 
-var DefaultTyper = NewDefaultTyper()
-
-type Typer struct {
+type fontType struct {
 	Drawer         *font.Drawer
 	Height         fixed.Int26_6
 	XAlign, YAlign Alignment
 }
 
-func (t *Typer) Render(dst draw.Image, X, Y int, text string) {
-	d := t.Drawer
+func (f *fontType) Render(dst draw.Image, X, Y int, text string) {
+	d := f.Drawer
 	d.Dst = dst
 	var dX fixed.Int26_6
 
 	// dX needs to be calculated on render because the length of text changes
-	switch t.XAlign {
+	switch f.XAlign {
 	case CenterAlign:
 		dX = fixed.I(X) - d.MeasureString(text)/2
 	case RightAlign:
@@ -64,7 +62,7 @@ func (t *Typer) Render(dst draw.Image, X, Y int, text string) {
 		dX = fixed.I(X)
 	}
 	// dY only needs to account for t.Height because Y is calculated by Primitive.Vector()
-	dY := fixed.I(Y) + t.Height
+	dY := fixed.I(Y) + f.Height
 
 	d.Dot = fixed.Point26_6{
 		X: dX,
@@ -73,7 +71,7 @@ func (t *Typer) Render(dst draw.Image, X, Y int, text string) {
 	d.DrawString(text)
 }
 
-func NewTyper(size int) (*Typer, error) {
+func newFont(size int) (*fontType, error) {
 	fg := image.Black
 
 	d := &font.Drawer{
@@ -85,7 +83,7 @@ func NewTyper(size int) (*Typer, error) {
 		}),
 	}
 
-	t := &Typer{
+	t := &fontType{
 		Drawer: d,
 		Height: fixed.I(size * 300 / 72),
 	}
@@ -107,12 +105,4 @@ func parseFont(file string) *truetype.Font {
 	}
 
 	return ttf
-}
-
-func NewDefaultTyper() *Typer {
-	t, err := NewTyper(8)
-	if err != nil {
-		log.Fatal(err)
-	}
-	return t
 }

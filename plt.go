@@ -19,7 +19,7 @@ func Bar(X []string, Y []float64) (draw.Image, error) {
 		return nil, err
 	}
 
-	ax, _ := canvas.NewAxes(fig, 0.1, 0.1, 0.8, 0.8)
+	ax := fig.NewAxes()
 	ax.BarPlot(X, Y)
 
 	plot := Render(fig)
