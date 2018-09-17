@@ -9,30 +9,20 @@ import (
 	"gonum.org/v1/gonum/mat"
 )
 
-// LeftAlign defines the left side of the container as the origin point.
-//
-// Used for X alignment.
-const LeftAlign byte = 0
-
-// BottomAlign defines the bottom side of the container as the origin point.
-//
-// Used for X alignment.
-const BottomAlign byte = 0
-
-// CenterAlign defines the center point of the container as the origin point.
-//
-// Can be used for X and Y alignment.
-const CenterAlign byte = 1
-
-// RightAlign defines the right side of the container as the origin point.
-//
-// Used for X alignment.
-const RightAlign byte = 2
-
-// TopAlign defines the top side of the container as the origin point.
-//
-// Used for Y alignment.
-const TopAlign byte = 2
+// Constants used to align a Container's side to
+// its origin point.
+const (
+	// Used for X alignment
+	LeftAlign byte = 0
+	// Used for Y alignment
+	BottomAlign byte = 0
+	// Used for X and Y alignment
+	CenterAlign byte = 1
+	// Used for X alignment
+	RightAlign byte = 2
+	// Used for Y alignment
+	TopAlign byte = 2
+)
 
 // transformer is an interface that makes sure the Primitive returns
 // a vector transformed into pixels and its transformation matrix.
