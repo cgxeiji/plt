@@ -9,7 +9,7 @@ import (
 // the plot.
 // This is the top parent container.
 type Figure struct {
-	Primitive
+	primitive
 }
 
 // Resize changes the width and height of the Figure.

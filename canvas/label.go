@@ -14,7 +14,7 @@ import (
 )
 
 type Label struct {
-	Primitive
+	primitive
 	Parent *Axis
 	Text   string
 }

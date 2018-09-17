@@ -12,7 +12,7 @@ import (
 
 // Axes represents a Primitive with Figure as its parent.
 type Axes struct {
-	Primitive
+	primitive
 	Parent *Figure
 }
 
@@ -103,7 +103,7 @@ func (ax *Axes) BarPlot(X []string, Y []float64) error {
 		bar.XAlign = CenterAlign
 	}
 
-	axX, _ := NewAxis(ax, BottomAxis)
+	axX, _ := newAxis(ax, BottomAxis)
 
 	if X != nil {
 		axX.Labels(X, padding+spaceW)
@@ -118,7 +118,7 @@ func (ax *Axes) BarPlot(X []string, Y []float64) error {
 		}
 	}
 
-	axY, err := NewAxis(ax, LeftAxis)
+	axY, err := newAxis(ax, LeftAxis)
 	if err != nil {
 		return err
 	}
@@ -163,13 +163,13 @@ func (ax *Axes) ScatterPlot(X, Y []float64) error {
 		}
 	}
 
-	axX, err := NewAxis(ax, BottomAxis)
+	axX, err := newAxis(ax, BottomAxis)
 	if err != nil {
 		return err
 	}
 	axX.Labels(labels, padding)
 
-	axX2, err := NewAxis(ax, TopAxis)
+	axX2, err := newAxis(ax, TopAxis)
 	if err != nil {
 		return err
 	}
@@ -184,13 +184,13 @@ func (ax *Axes) ScatterPlot(X, Y []float64) error {
 		}
 	}
 
-	axY, err := NewAxis(ax, LeftAxis)
+	axY, err := newAxis(ax, LeftAxis)
 	if err != nil {
 		return err
 	}
 	axY.Labels(labelsY, 0.1)
 
-	axY2, err := NewAxis(ax, RightAxis)
+	axY2, err := newAxis(ax, RightAxis)
 	if err != nil {
 		return err
 	}
@@ -235,6 +235,6 @@ func border(dst draw.Image, r image.Rectangle, w int, src image.Image,
 
 // Render draws the Axes' border on top of drawing its contents.
 func (ax *Axes) Render(dst draw.Image) {
-	ax.Primitive.Render(dst)
+	ax.primitive.Render(dst)
 	border(dst, ax.Bounds(), -2, &image.Uniform{colornames.Black}, image.ZP, draw.Src)
 }

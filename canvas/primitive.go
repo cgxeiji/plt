@@ -71,16 +71,16 @@ func transform(t transformer) *mat.Dense {
 	return render
 }
 
-// Primitive is the building block of the plotter.
-// Most elements used on the plotter are derivatives from Primitive.
+// primitive is the building block of the plotter.
+// Most elements used on the plotter are derivatives from primitive.
 //
-// A Primitive holds all the information necessary to draw the element
+// A primitive holds all the information necessary to draw the element
 // into an image.
 //
-// Primitive implements Container.
-// Any Primitive can contain other primitives
+// primitive implements Container.
+// Any primitive can contain other primitives
 // as a slice of Container in children.
-type Primitive struct {
+type primitive struct {
 	Origin, Size           [2]float64
 	T                      []*mat.Dense
 	FillColor, StrokeColor color.Color
@@ -92,7 +92,7 @@ type Primitive struct {
 // the bounding rectangle of the Primitive.
 //
 // The coordinates system are relative to the Primitive's parent.
-func (p *Primitive) Vector() mat.Matrix {
+func (p *primitive) Vector() mat.Matrix {
 	var v []float64
 	switch p.XAlign {
 	case CenterAlign:
@@ -117,12 +117,12 @@ func (p *Primitive) Vector() mat.Matrix {
 }
 
 // Transform returns the transformation matrix of the Primitive.
-func (p *Primitive) Transform() []*mat.Dense {
+func (p *primitive) Transform() []*mat.Dense {
 	return p.T
 }
 
 // Render draws the Primitive into a draw.Image interface.
-func (p *Primitive) Render(dst draw.Image) {
+func (p *primitive) Render(dst draw.Image) {
 	draw.Draw(dst, p.Bounds(), &image.Uniform{p.Color()}, image.ZP, draw.Over)
 }
 
@@ -141,7 +141,7 @@ func max(a, b int) int {
 }
 
 // Bounds returns the bounds to be rendered out of a Primitive in pixels.
-func (p *Primitive) Bounds() image.Rectangle {
+func (p *primitive) Bounds() image.Rectangle {
 	var x0, y0, x1, y1 int
 
 	v := transform(p)
@@ -157,11 +157,11 @@ func (p *Primitive) Bounds() image.Rectangle {
 }
 
 // Color returns the fill color of a Primitive.
-func (p *Primitive) Color() color.Color {
+func (p *primitive) Color() color.Color {
 	return p.FillColor
 }
 
-func (p *Primitive) String() string {
+func (p *primitive) String() string {
 	b := p.Bounds()
 	return fmt.Sprintf(
 		"Primitive {T: %v, Origin: %v (pixels: %v), Size: %v (pixels: %v)}",
@@ -170,7 +170,7 @@ func (p *Primitive) String() string {
 }
 
 // Children returns a slice of Container from the children of a Primitive.
-func (p *Primitive) Children() []Container {
+func (p *primitive) Children() []Container {
 	return p.children
 }
 

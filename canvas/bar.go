@@ -8,14 +8,14 @@ import (
 
 // Bar is a struct that contains the information necessary to render a single bar in a chart.
 type Bar struct {
-	Primitive
+	primitive
 	Parent *Axes
 	Loc    [2]float64
 	Value  float64
 }
 
 func (b *Bar) String() string {
-	return fmt.Sprintf("%v\n ...Bar {Value: %v, Location: %v}", b.Primitive.String(), b.Value, b.Loc)
+	return fmt.Sprintf("%v\n ...Bar {Value: %v, Location: %v}", b.primitive.String(), b.Value, b.Loc)
 }
 
 // NewBar creates a new *Bar struct belonging to a parent Axes.

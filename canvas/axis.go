@@ -19,16 +19,16 @@ const (
 
 // Axis represents a Primitive for horizontal and vertical axes with Axes as its parent.
 type Axis struct {
-	Primitive
+	primitive
 	Min, Max float64
 	Loc      Alignment
 	Parent   *Axes
 	Typer    *Typer
 }
 
-// NewAxis creates a new Axis linked to an Axes.
+// newAxis creates a new Axis linked to an Axes.
 // The parameter location can be set to BottomAxis, LeftAxis, TopAxis or RightAxis.
-func NewAxis(parent *Axes, location Alignment) (*Axis, error) {
+func newAxis(parent *Axes, location Alignment) (*Axis, error) {
 	var ax Axis
 	var o, s [2]float64
 
@@ -113,7 +113,7 @@ func (a *Axis) Labels(X []string, padding float64) {
 
 // Tick represents a tick to be drawn on an Axis
 type Tick struct {
-	Primitive
+	primitive
 	W      int
 	Parent *Axis
 }

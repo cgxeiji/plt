@@ -5,7 +5,7 @@ import (
 )
 
 type ScatterPoint struct {
-	Primitive
+	primitive
 	Parent *Axes
 	X, Y   float64
 }
